@@ -10,7 +10,8 @@ src = cv2.imread("unmarked.jpg", cv2.IMREAD_COLOR)
 height, width, channel = src.shape
 
 # assign 4 test paper's edges' coordinates and warp it to the original image size
-srcPoint=np.array([[66, 36], [699, 31], [734, 977], [41, 973]], dtype=np.float32)
+# srcPoint=np.array([[66, 36], [699, 31], [734, 977], [41, 973]], dtype=np.float32) # for imageSet 1
+srcPoint=np.array([[72, 57], [692, 54], [758, 976], [39, 995]], dtype=np.float32) # for imageSet 2
 dstPoint=np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
 matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
 # dstUnmarked : warped testing paper with no mark as original size
@@ -22,7 +23,8 @@ src = cv2.imread("marked.jpg", cv2.IMREAD_COLOR)
 height, width, channel = src.shape
 
 # assign 4 test paper's edges' coordinates and warp it to the original image size
-srcPoint=np.array([[210, 220], [641, 228], [682, 953], [50, 875]], dtype=np.float32)
+# srcPoint=np.array([[210, 220], [641, 228], [682, 953], [50, 875]], dtype=np.float32) # for imageSet 1
+srcPoint=np.array([[65, 39], [692, 48], [751, 987], [11, 996]], dtype=np.float32) # for imageSet 2
 dstPoint=np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
 matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
 # dstMarked : warped testing paper with markings as original size
@@ -34,25 +36,35 @@ grayA = cv2.cvtColor(dstUnmarked, cv2.COLOR_BGR2GRAY)
 grayB = cv2.cvtColor(dstMarked, cv2.COLOR_BGR2GRAY)
 
 
-"""
+
 # blur
-grayA = cv2.GaussianBlur(grayA, (7, 7), 0)
-grayB = cv2.GaussianBlur(grayB, (7, 7), 0)
-"""
+
+for i in range(10):
+	grayA = cv2.GaussianBlur(grayA, (7, 7), 0)
+	grayB = cv2.GaussianBlur(grayB, (7, 7), 0)
+
+
+# minus = abs(grayB - grayA)
+
 
 
 # compute the Structural Similarity Index (SSIM) between the two
 # images, ensuring that the difference image is returned
 (score, diff) = compare_ssim(grayA, grayB, full=True)
+# diff = (diff * 255).astype("uint8")  # multiplication number can be changed!
 diff = (diff * 255).astype("uint8")
 print("SSIM: {}".format(score))
 
 
 
+
 # threshold the difference image, followed by finding contours to
+# image binarization : classify every pixels as 0 or 1, not continuous one.
 # obtain the regions of the two input images that differ
 thresh = cv2.threshold(diff, 0, 255,
-	cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+ 	cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+
+
 """
 cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
 	cv2.CHAIN_APPROX_SIMPLE)
@@ -74,4 +86,5 @@ cv2.imshow("UnmarkedOriginal", grayA)
 cv2.imshow("MarkedOriginal", grayB)
 cv2.imshow("Diff", diff)
 cv2.imshow("Thresh", thresh)
+# cv2.imshow("Minus", minus)
 cv2.waitKey(0)

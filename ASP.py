@@ -5,6 +5,30 @@ from skimage.measure import compare_ssim
 import argparse
 import imutils
 
+
+
+
+mouse_is_pressing = False
+start_x, starty = -1, -1
+
+def mouse_callback(event,x,y,flags,param):
+	global start_x, start_y,mouse_is_pressing
+
+	if event == cv2.EVENT_LBUTTONDOWN:
+		mouse_is_pressing = True
+		start_x, start_y = x, y
+
+
+	elif event == cv2.EVENT_LBUTTONUP:
+		mouse_is_pressing = False
+		# 원본 영역에서 두 점 (start_y, start_x), (x,y)로 구성되는 사각영역을 잘라내어 변수 img_cat이 참조하도록 합니다.
+		ROI = thresh[ start_y:y, start_x:x]
+		cv2.imshow("ROI", ROI)
+		print(ROI)
+
+
+
+
 # read unmarked image
 src = cv2.imread("unmarked.jpg", cv2.IMREAD_COLOR)
 height, width, channel = src.shape
@@ -64,6 +88,17 @@ print("SSIM: {}".format(score))
 thresh = cv2.threshold(diff, 0, 255,
  	cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
+cv2.imwrite('thresh.jpg', thresh)
+
+# Region of Interest (ROI)
+
+
+
+"""
+for i in thresh:
+	print(i)
+"""
+
 
 """
 cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
@@ -86,5 +121,7 @@ cv2.imshow("UnmarkedOriginal", grayA)
 cv2.imshow("MarkedOriginal", grayB)
 cv2.imshow("Diff", diff)
 cv2.imshow("Thresh", thresh)
+cv2.setMouseCallback('Thresh', mouse_callback)
 # cv2.imshow("Minus", minus)
 cv2.waitKey(0)
+cv2.destroyAllWindows()

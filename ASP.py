@@ -11,6 +11,7 @@ import imutils
 mouse_is_pressing = False
 start_x, starty = -1, -1
 
+
 def mouse_callback(event,x,y,flags,param):
 	global start_x, start_y,mouse_is_pressing
 
@@ -23,8 +24,20 @@ def mouse_callback(event,x,y,flags,param):
 		mouse_is_pressing = False
 		# 원본 영역에서 두 점 (start_y, start_x), (x,y)로 구성되는 사각영역을 잘라내어 변수 img_cat이 참조하도록 합니다.
 		ROI = thresh[ start_y:y, start_x:x]
+		unique, counts = np.unique(ROI, return_counts=True)
+
+		print("validity of chosen area")
+		if 0 not in unique:
+			print(1)
+		elif 255 not in unique:
+			print(0)
+		else:
+			validity = counts[1] / (counts[0] + counts[1])
+			print(validity)
+
+
 		cv2.imshow("ROI", ROI)
-		print(ROI)
+
 
 
 

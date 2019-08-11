@@ -56,9 +56,26 @@ def mouseCallbackROI(event,x,y,flags,param):
 
 
 
+curTestCase = input("Enter testcase number")
+
+
+
 
 # read unmarked image
-src = cv2.imread("unmarked.jpg", cv2.IMREAD_COLOR)
+src = cv2.imread("unmarked" + curTestCase + ".jpg", cv2.IMREAD_COLOR)
+height = src.shape[0]
+width = src.shape[0]
+
+if height >= width:
+	dim = (width * (1000 / height))
+else:
+	dim = (width * (1000 / width))
+src = cv2.resize(src, dim, interpolation=cv2.INTER_AREA)
+
+print("Changed dimensions : ", src.shape)
+
+
+
 height, width, channel = src.shape
 
 cv2.imshow("UnmarkedOriginal", src)
@@ -86,7 +103,21 @@ cv2.imshow("UnmarkedOriginal", dstUnmarked)
 
 
 # read marked image
-src = cv2.imread("marked.jpg", cv2.IMREAD_COLOR)
+src = cv2.imread("marked" + curTestCase + ".jpg", cv2.IMREAD_COLOR)
+height = src.shape[0]
+width = src.shape[0]
+
+if height >= width:
+	dim = (width * (1000 / height))
+else:
+	dim = (width * (1000 / width))
+src = cv2.resize(src, dim, interpolation=cv2.INTER_AREA)
+
+print("Changed dimensions : ", src.shape)
+
+
+
+
 height, width, channel = src.shape
 
 

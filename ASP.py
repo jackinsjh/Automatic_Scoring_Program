@@ -64,13 +64,13 @@ curTestCase = input("Enter testcase number")
 # read unmarked image
 src = cv2.imread("unmarked" + curTestCase + ".jpg", cv2.IMREAD_COLOR)
 height = src.shape[0]
-width = src.shape[0]
+width = src.shape[1]
 
 if height >= width:
-	dim = (width * (1000 / height))
+	resizeScale = 1000 / height
 else:
-	dim = (width * (1000 / width))
-src = cv2.resize(src, dim, interpolation=cv2.INTER_AREA)
+	resizeScale = 1000 / width
+src = cv2.resize(src, (int(width * resizeScale), int(height * resizeScale)), interpolation=cv2.INTER_AREA)
 
 print("Changed dimensions : ", src.shape)
 
@@ -99,19 +99,18 @@ dstPoint=np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.f
 matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
 # dstUnmarked : warped testing paper with no mark as original size
 dstUnmarked = cv2.warpPerspective(src, matrix, (width, height))
-cv2.imshow("UnmarkedOriginal", dstUnmarked)
 
 
 # read marked image
 src = cv2.imread("marked" + curTestCase + ".jpg", cv2.IMREAD_COLOR)
 height = src.shape[0]
-width = src.shape[0]
+width = src.shape[1]
 
 if height >= width:
-	dim = (width * (1000 / height))
+	resizeScale = 1000 / height
 else:
-	dim = (width * (1000 / width))
-src = cv2.resize(src, dim, interpolation=cv2.INTER_AREA)
+	resizeScale = 1000 / width
+src = cv2.resize(src, (int(width * resizeScale), int(height * resizeScale)), interpolation=cv2.INTER_AREA)
 
 print("Changed dimensions : ", src.shape)
 
@@ -144,7 +143,6 @@ dstPoint=np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.f
 matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
 # dstMarked : warped testing paper with markings as original size
 dstMarked = cv2.warpPerspective(src, matrix, (width, height))
-cv2.imshow("MarkedOriginal", dstMarked)
 
 
 # convert the images to grayscale
@@ -180,7 +178,7 @@ print("SSIM: {}".format(score))
 thresh = cv2.threshold(diff, 0, 255,
  	cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
-cv2.imwrite('thresh.jpg', thresh)
+# cv2.imwrite('thresh.jpg', thresh)
 
 # Region of Interest (ROI)
 
@@ -214,6 +212,8 @@ cv2.imshow("MarkedOriginal", grayB)
 cv2.imshow("Diff", diff)
 cv2.imshow("Thresh", thresh)
 cv2.setMouseCallback('Thresh', mouseCallbackROI)
-# cv2.imshow("Minus", minus)
+
+print("drag mouse from left-top to right-bottom to capture area and check validity of that area")
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()

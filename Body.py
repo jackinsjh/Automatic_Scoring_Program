@@ -26,7 +26,6 @@ class Ui_Dialog(object):
         self.pushButton = QtWidgets.QPushButton(Dialog)
         self.pushButton.setGeometry(QtCore.QRect(160, 180, 75, 31))
         self.pushButton.setObjectName("pushButton")
-        btnGetImage.clicked.connect(self.pushButtonClicked)
 
 
         self.retranslateUi(Dialog)

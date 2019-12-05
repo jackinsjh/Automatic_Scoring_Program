@@ -13,19 +13,21 @@ import argparse
 import imutils
 
 
-class Ui_Dialog(object):
+class problemNumDialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(400, 300)
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setGeometry(QtCore.QRect(80, 100, 181, 16))
         self.label.setObjectName("label")
-        self.textEdit = QtWidgets.QTextEdit(Dialog)
-        self.textEdit.setGeometry(QtCore.QRect(80, 130, 201, 31))
-        self.textEdit.setObjectName("textEdit")
-        self.pushButton = QtWidgets.QPushButton(Dialog)
-        self.pushButton.setGeometry(QtCore.QRect(160, 180, 75, 31))
-        self.pushButton.setObjectName("pushButton")
+        self.problemNumInput = QtWidgets.QTextEdit(Dialog)
+        self.problemNumInput.setGeometry(QtCore.QRect(80, 130, 201, 31))
+        self.problemNumInput.setObjectName("textEdit")
+        self.confirmButton = QtWidgets.QPushButton(Dialog)
+        self.confirmButton.setGeometry(QtCore.QRect(160, 180, 75, 31))
+        self.confirmButton.setObjectName("conFirmButton")
+        self.confirmButton.clicked.connect((self.onConfirmClicked))
+        self.problemNum = -1
 
 
         self.retranslateUi(Dialog)
@@ -35,14 +37,48 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "문제 수 입력"))
         self.label.setText(_translate("Dialog", "문제 수를 입력하세요"))
-        self.pushButton.setText(_translate("Dialog", "확인"))
+        self.confirmButton.setText(_translate("Dialog", "확인"))
+
+    def onConfirmClicked(self):
+        self.problemNum = self.problemNumInput.toPlainText()
+        # ex = guiMain()
+        """
+        next = QDialog()
+        ui = setEmptyPaper()
+        ui.setupUi(Dialog)
+        Dialog.show()
+        """
+        empty = setEmptyPaper()
+        empty.exec_()
+
+
+
+
+
+class setEmptyPaper(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(400, 300)
+        self.confirmButton = QtWidgets.QPushButton(Dialog)
+        self.confirmButton.setGeometry(QtCore.QRect(160, 180, 75, 31))
+        self.confirmButton.setObjectName("conFirmButton")
+        self.confirmButton.clicked.connect((self.onButtonClicked))
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "빈 시험지 입력"))
+        self.confirmButton.setText(_translate("Dialog", "빈 시험지 입력"))
+
+    def onButtonClicked(self):
+        print('setEmpButtonClicked')
+
+
 
 
 
 class guiMain(QWidget):
-
-
-
     def __init__(self):
         super().__init__()
 
@@ -258,9 +294,10 @@ class guiMain(QWidget):
 app = QApplication(sys.argv)
 
 Dialog = QDialog()
-ui = Ui_Dialog()
+ui = problemNumDialog()
 ui.setupUi(Dialog)
 Dialog.show()
 
-ex = guiMain()
-sys.exit(app.exec_())
+# ex = guiMain()
+# sys.exit(app.exec_())
+app.exec_()

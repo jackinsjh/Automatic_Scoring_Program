@@ -19,6 +19,25 @@ class Ui_QuestionNumInput(object):
         
     def setupUi(self, questionNumInput):
         questionNumInput.setObjectName("questionNumInput")
+        questionNumInput.resize(400, 300)
+        self.label = QtWidgets.QLabel(questionNumInput)
+        self.label.setGeometry(QtCore.QRect(80, 100, 181, 16))
+        self.label.setObjectName("label")
+        self.problemNumInput = QtWidgets.QTextEdit(questionNumInput)
+        self.problemNumInput.setGeometry(QtCore.QRect(80, 130, 201, 31))
+        self.problemNumInput.setObjectName("textEdit")
+        self.confirmButton = QtWidgets.QPushButton(questionNumInput)
+        self.confirmButton.setGeometry(QtCore.QRect(160, 180, 75, 31))
+        self.confirmButton.setObjectName("conFirmButton")
+        self.confirmButton.clicked.connect((self.openWindow))
+        self.problemNum = -1
+
+
+        self.retranslateUi(questionNumInput)
+        QtCore.QMetaObject.connectSlotsByName(questionNumInput)
+
+        """
+        questionNumInput.setObjectName("questionNumInput")
         questionNumInput.resize(371, 297)
         self.centralwidget = QtWidgets.QWidget(questionNumInput)
         self.centralwidget.setObjectName("centralwidget")
@@ -42,11 +61,12 @@ class Ui_QuestionNumInput(object):
 
         self.retranslateUi(questionNumInput)
         QtCore.QMetaObject.connectSlotsByName(questionNumInput)
+        """
 
     def retranslateUi(self, questionNumInput):
         _translate = QtCore.QCoreApplication.translate
         questionNumInput.setWindowTitle(_translate("questionNumInput", "questionNumInput"))
-        self.btn_open.setText(_translate("questionNumInput", "Open Window"))
+        self.confirmButton.setText(_translate("questionNumInput", "Open Window"))
         self.label.setText(_translate("questionNumInput", "Click To Open Window"))
 
 

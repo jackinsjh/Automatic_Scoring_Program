@@ -10,10 +10,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from blankPaperInput import Ui_blankPaperInput
 class Ui_QuestionNumInput(object):
 
-    def openWindow(self):
+    def confirmButtonClicked(self):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_blankPaperInput()
-        self.ui.setupUi(self.window)
+        # self.problemNumInput.toPlainText()
+        self.ui.setupUi(self.window, int(self.problemNumInput.toPlainText()))
         questionNumInput.hide()
         self.window.show()
         
@@ -29,7 +30,7 @@ class Ui_QuestionNumInput(object):
         self.confirmButton = QtWidgets.QPushButton(questionNumInput)
         self.confirmButton.setGeometry(QtCore.QRect(160, 180, 75, 31))
         self.confirmButton.setObjectName("conFirmButton")
-        self.confirmButton.clicked.connect((self.openWindow))
+        self.confirmButton.clicked.connect((self.confirmButtonClicked))
         self.problemNum = -1
 
 
@@ -37,6 +38,7 @@ class Ui_QuestionNumInput(object):
         QtCore.QMetaObject.connectSlotsByName(questionNumInput)
 
         """
+        # original code
         questionNumInput.setObjectName("questionNumInput")
         questionNumInput.resize(371, 297)
         self.centralwidget = QtWidgets.QWidget(questionNumInput)

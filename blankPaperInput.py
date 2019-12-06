@@ -9,7 +9,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_blankPaperInput(object):
-    def setupUi(self, blankPaperInput):
+    problemNum = -1
+
+    def setupUi(self, blankPaperInput, problemNum):
+        self.problemNum = problemNum
+
         blankPaperInput.setObjectName("blankPaperInput")
         blankPaperInput.resize(568, 109)
         self.centralwidget = QtWidgets.QWidget(blankPaperInput)
@@ -27,6 +31,10 @@ class Ui_blankPaperInput(object):
 
         self.retranslateUi(blankPaperInput)
         QtCore.QMetaObject.connectSlotsByName(blankPaperInput)
+        #print(self.problemNum)
+
+
+
 
     def retranslateUi(self, blankPaperInput):
         _translate = QtCore.QCoreApplication.translate

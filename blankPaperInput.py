@@ -26,6 +26,46 @@ class Ui_blankPaperInput(object):
     mouse_is_pressing = False
     clickX, clickY = -1, -1
     clickCoordinates = []
+    problemCoordinateList = []
+    problemIsAnswerList = []
+
+    def mouseCallbackROI(self, event, x, y, flags, param):
+
+        if event == cv2.EVENT_LBUTTONDOWN:
+            self.mouse_is_pressing = True
+            self.clickX, self.clickY = x, y
+            self.clickXFirst = x
+            self.clickYFirst = y
+            print(x)
+            print(y)
+
+
+        elif event == cv2.EVENT_LBUTTONUP:
+            self.mouse_is_pressing = False
+            # 원본 영역에서 두 점 (clickY, clickX), (x,y)로 구성되는 사각영역을 잘라내어 변수 img_cat이 참조하도록 합니다.
+            # ROI = thresh[clickY:y, clickX:x]
+            self.clickXLast = x
+            self.clickYLast = y
+            print(x)
+            print(y)
+            # print(ROI)
+            """
+            unique, counts = np.unique(ROI, return_counts=True)
+
+            print("validity of chosen area")
+            if 0 not in unique:
+                print(1)
+            elif 255 not in unique:
+                print(0)
+            else:
+                validity = counts[1] / (counts[0] + counts[1])
+                print(validity)
+
+            cv2.imshow("ROI", ROI)
+            """
+
+
+
 
     def setupUi(self, blankPaperInput, problemNum):  #problemNum
         self.problemNum = problemNum
@@ -49,6 +89,8 @@ class Ui_blankPaperInput(object):
 
         self.retranslateUi(blankPaperInput)
         QtCore.QMetaObject.connectSlotsByName(blankPaperInput)
+        self.totalProblemCoordinates = []
+        self.totalIsAnswers = []
 
         """
         # original code
@@ -125,8 +167,6 @@ class Ui_blankPaperInput(object):
         self.clickCoordinates = []
 
         # assign 4 test paper's edges' coordinates and warp it to the original image size
-        # srcPoint=np.array([[66, 36], [699, 31], [734, 977], [41, 973]], dtype=np.float32) # for imageSet 1
-        # srcPoint=np.array([[72, 57], [692, 54], [758, 976], [39, 995]], dtype=np.float32) # for imageSet 2
         dstPoint = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
         matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
         # dstUnmarked : warped testing paper with no mark as original size
@@ -139,8 +179,59 @@ class Ui_blankPaperInput(object):
 
 
 
+
+        # 각 문제영역 지정
+        curProblemCoordinates = []
+        curProblemIsAnswers = []
+
+        for i in range(self.problemNum):
+            while True:
+                cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
+                cv2.setMouseCallback('warpedUnmarkedPaper', self.mouseCallbackROI)
+
+                print("Drag the area of each problem, starting from left-upper side, to right-under side")
+                print("After that, press 1 if correct, press 2 if incorrect, else if all the choices are marked")
+                keyInput = cv2.waitKey(0)
+                dragCoordinates = [self.clickXFirst, self.clickYFirst, self.clickXLast, self.clickYLast]
+
+                cv2.destroyAllWindows()
+                print(dragCoordinates)
+
+                if keyInput == ord('1'):  # 정답
+                    print('correct')
+                    curProblemIsAnswers.append(True)
+                    curProblemCoordinates.append(dragCoordinates)
+                elif keyInput == ord('2'):  # 오답
+                    print('incorrect')
+                    curProblemIsAnswers.append(False)
+                    curProblemCoordinates.append(dragCoordinates)
+                else:  # 문제 영역 마킹 끝
+                    break
+
+            self.totalProblemCoordinates.append(curProblemCoordinates)
+            print("added coordinates: {}".format(curProblemCoordinates))
+            self.totalIsAnswers.append(curProblemIsAnswers)
+            print("added isAnswers: {}".format(curProblemIsAnswers))
+            curProblemCoordinates = []
+            curProblemIsAnswers = []
+
+
+
+
+        # srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
+        # self.clickCoordinates = []
+
+
+        print('area designation completed')
+        print('final problem areas:')
+        print(self.totalProblemCoordinates)
+        print('final problem isAnswers:')
+        print(self.totalIsAnswers)
+
+
+
         self.window = QtWidgets.QMainWindow()
-        self.ui = UI_ProblemSetting([])
+        self.ui = UI_ProblemSetting(self.totalProblemCoordinates, self.totalIsAnswers)
         # self.ui.setupUi(self.window)
         # blankPaperInput.hide()
         self.window.show()

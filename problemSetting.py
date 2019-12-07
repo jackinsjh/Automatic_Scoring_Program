@@ -24,12 +24,33 @@ class eachProblemInfo:
 
 
 class UI_ProblemSetting(QWidget):
-    def __init__(self, problemInfoList):
+
+    mouse_is_pressing = False
+    clickX, clickY = -1, -1
+    clickCoordinates = []
+
+    def __init__(self, totalProblemCoordinates, totalIsAnswers):
         super().__init__()
 
         #함수 역할
         #UI요소별로 함수 설정 해둠
         #move(a,b)로 위치 선정. 절대값. a가 왼쪽에서 얼마나 떨어지는지, b가 위에서 얼마나 아래인지.
+
+        self.totalProblemCoordinates = totalProblemCoordinates
+        self.totalIsAnswers = totalIsAnswers
+
+
+        print(self.totalProblemCoordinates)
+        print(self.totalIsAnswers)
+
+
+        self.prevProblemInfoList = problemInfoList
+        self.curProblemType = -1
+        self.problemNum = len(self.prevProblemInfoList) + 1
+        self.curProblemAreas = []
+        self.curProblemIsAnswer = []
+        self.curProblemScore = -1
+
         self.comboBoxUI()
         # self.radioButtonUI()
         self.buttonUI()
@@ -65,6 +86,9 @@ class UI_ProblemSetting(QWidget):
 
         labelQNum = QLabel('문제 번호', self)
         labelQNum.move(100, 100)
+
+        labelQNum = QLabel(str(self.problemNum), self)
+        labelQNum.move(100, 150)
 
         labelQType = QLabel('문제 분류 설정', self)
         labelQType.move(100, 200)
@@ -116,6 +140,7 @@ class UI_ProblemSetting(QWidget):
         btnSetProblemArea.setToolTip('문제 영역 지정')
         # btnSetProblemArea.resize(btnGetImage.sizeHint())
         btnSetProblemArea.move(100, 300)
+        btnSetProblemArea.clicked.connect((self.onAreaButtonClicked))
 
         """
         btnGetImage = QPushButton('시험지 가져오기', self)
@@ -145,6 +170,7 @@ class UI_ProblemSetting(QWidget):
         btnTempSave.setStyleSheet('color:black; background:#58565b')
         btnTempSave.resize(100,50)
         btnTempSave.move(100, 700)
+        btnTempSave.clicked.connect((self.onNextButtonClicked))
 
         btnSave = QPushButton('문제 설정 완료',self)
         btnSave.setToolTip('저장하기')
@@ -161,6 +187,65 @@ class UI_ProblemSetting(QWidget):
         """
         # btnTempSave.clicked.connect(self.clickMethodDragComplete)
         # btnSave.clicked.connect(self.clickMethod3)
+
+    def onAreaButtonClicked(self):
+        fname = QFileDialog.getOpenFileName()
+        # self.label.setText(fname[0])    #해당 파일의 절대 경로
+        fileLoc = fname[0]
+
+        # read unmarked image
+        src = cv2.imread(fileLoc, cv2.IMREAD_COLOR)
+        height = src.shape[0]
+        width = src.shape[1]
+
+        if height >= width:
+            resizeScale = 1000 / height
+        else:
+            resizeScale = 1000 / width
+        src = cv2.resize(src, (int(width * resizeScale), int(height * resizeScale)), interpolation=cv2.INTER_AREA)
+
+        print("Changed dimensions : ", src.shape)
+
+        height, width, channel = src.shape
+
+        cv2.imshow("UnmarkedOriginal", src)
+        cv2.setMouseCallback('UnmarkedOriginal', self.mouseCallbackSpot)
+
+        print("Click 4 spot of the image, starting from left-upper side, clockwise")
+        print("After that, press any key")
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        print(self.clickCoordinates)
+
+        srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
+        self.clickCoordinates = []
+
+
+
+
+
+        # assign 4 test paper's edges' coordinates and warp it to the original image size
+        # srcPoint=np.array([[66, 36], [699, 31], [734, 977], [41, 973]], dtype=np.float32) # for imageSet 1
+        # srcPoint=np.array([[72, 57], [692, 54], [758, 976], [39, 995]], dtype=np.float32) # for imageSet 2
+        dstPoint = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
+        matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
+        # dstUnmarked : warped testing paper with no mark as original size
+        warpedUnmarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
+        cv2.imwrite('./buffer/paper_{}.jpg'.format(self.problemNum), warpedUnmarkedPaper)
+        cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
+
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+
+
+
+
+    def mouseCallbackSpot(self, event, x, y, flags, param):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            self.mouse_is_pressing = True
+            self.clickX, self.clickY = x, y
+            self.clickCoordinates.append([self.clickX, self.clickY])
 
     """
     # 사진 가져오기 함수
@@ -234,6 +319,14 @@ class UI_ProblemSetting(QWidget):
         #self.statusBar.showMessage(msg)
     """
 
+    def onNextButtonClicked(self):
+        # 지금까지의 문제 정보 정리해 다음 UI에 넘기기
+        self.window = QtWidgets.QMainWindow()
+        curProblem = eachProblemInfo(self.curProblemType, )
+        self.prevProblemInfoList.append()
+        self.ui = UI_ProblemSetting([])
+        self.window.show()
+
     #스크롤 선택
     def comboBoxUI(self):
         """
@@ -250,8 +343,12 @@ class UI_ProblemSetting(QWidget):
         cbQType.addItem('주관식')
         cbQType.addItem('서술형')
         cbQType.move(100, 240)
+        cbQType.activated.connect(self.problemTypeSelected)
 
         #cb.activated[str].connect(self.onActivated)
+
+    def problemTypeSelected(self, index):
+        self.curProblemType = index
 
     #화면 기본 설정
     def initUI(self):

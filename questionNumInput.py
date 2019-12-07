@@ -10,6 +10,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from blankPaperInput import Ui_blankPaperInput
 class Ui_QuestionNumInput(object):
 
+
+
     def confirmButtonClicked(self):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_blankPaperInput()

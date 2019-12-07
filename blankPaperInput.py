@@ -140,7 +140,7 @@ class Ui_blankPaperInput(object):
 
 
         self.window = QtWidgets.QMainWindow()
-        self.ui = UI_ProblemSetting()
+        self.ui = UI_ProblemSetting([])
         # self.ui.setupUi(self.window)
         # blankPaperInput.hide()
         self.window.show()

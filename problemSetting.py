@@ -14,15 +14,24 @@ import imutils
 
 
 
+class eachProblemInfo:
+    def __init__(self, type, areas, isAnswer, score):
+        self.type = type
+        self.areas = areas
+        self.isAnswer = isAnswer
+        self.score = score
+
+
+
 class UI_ProblemSetting(QWidget):
-    def __init__(self):
+    def __init__(self, problemInfoList):
         super().__init__()
 
         #함수 역할
         #UI요소별로 함수 설정 해둠
         #move(a,b)로 위치 선정. 절대값. a가 왼쪽에서 얼마나 떨어지는지, b가 위에서 얼마나 아래인지.
         self.comboBoxUI()
-        self.radioButtonUI()
+        # self.radioButtonUI()
         self.buttonUI()
         self.labelUI()
         self.lineEditUI()
@@ -30,6 +39,7 @@ class UI_ProblemSetting(QWidget):
 
     #EditText
     def lineEditUI(self):
+        """
         lineEditQNums = QLineEdit(self)
         lineEditQNums.move(800, 60)
 
@@ -37,37 +47,43 @@ class UI_ProblemSetting(QWidget):
         lineEditQMemo.move(1105, 270)
         lineEditQMemo.resize(270, 200)
         lineEditQMemo.setText("문제에 대한 메모 내용")
+        """
 
         lineEditQScore = QLineEdit(self)
-        lineEditQScore.move(1105, 535)
+        lineEditQScore.move(105, 535)
         lineEditQScore.resize(100, 30)
 
     #TextView
     def labelUI(self):
+        """
         labelQNums = QLabel('문제 개수', self)
         labelQNums.move(800, 20)
 
         labelQNumbers = QLabel('문제', self)
         labelQNumbers.move(960, 63)
+        """
 
         labelQNum = QLabel('문제 번호', self)
-        labelQNum.move(800, 100)
+        labelQNum.move(100, 100)
 
         labelQType = QLabel('문제 분류 설정', self)
-        labelQType.move(800, 200)
+        labelQType.move(100, 200)
 
+        """
         labelTestSheetOpen = QLabel('시험지 펼치기', self)
         labelTestSheetOpen.move(1100, 20)
 
         labelMakeTestSheet = QLabel('정답지 만들기', self)
         labelMakeTestSheet.move(1100, 200)
+        """
 
         labelQScore = QLabel('배점', self)
-        labelQScore.move(1100, 500)
+        labelQScore.move(100, 500)
 
         labelQScoreName = QLabel('점', self)
-        labelQScoreName.move(1210, 538)
+        labelQScoreName.move(210, 538)
 
+        """
         basicLabelFont = labelQNums.font()
         basicLabelFont.setPointSize(20)
         basicLabelFont.setBold(True)
@@ -91,14 +107,23 @@ class UI_ProblemSetting(QWidget):
         labelMakeTestSheet.setFont(basicLabelFont)
         labelQScore.setFont(basicLabelFont)
         labelQScoreName.setFont(font2)
+        """
 
     #Button
     def buttonUI(self):
+
+        btnSetProblemArea = QPushButton('문제 영역 지정', self)
+        btnSetProblemArea.setToolTip('문제 영역 지정')
+        # btnSetProblemArea.resize(btnGetImage.sizeHint())
+        btnSetProblemArea.move(100, 300)
+
+        """
         btnGetImage = QPushButton('시험지 가져오기', self)
         btnGetImage.setToolTip('시험지 가져오기 버튼')
         btnGetImage.resize(btnGetImage.sizeHint())
-        btnGetImage.move(800, 300)
+        btnGetImage.move(100, 300)
 
+        
         btnVertexSelect = QPushButton('꼭지점 설정', self)
         btnVertexSelect.setToolTip('꼭지점 설정 버튼')
         btnVertexSelect.resize(btnVertexSelect.sizeHint())
@@ -113,27 +138,31 @@ class UI_ProblemSetting(QWidget):
         btnDrag.setToolTip('문제 지우기 선택')
         btnDrag.resize(btnDrag.sizeHint())
         btnDrag.move(1300, 240)
+        """
 
         btnTempSave = QPushButton('다음 문제',self)
         btnTempSave.setToolTip('임시 저장 및 다음 문제로 넘어가기')
         btnTempSave.setStyleSheet('color:black; background:#58565b')
         btnTempSave.resize(100,50)
-        btnTempSave.move(1700, 900)
+        btnTempSave.move(100, 700)
 
-        btnSave = QPushButton('전체 저장',self)
+        btnSave = QPushButton('문제 설정 완료',self)
         btnSave.setToolTip('저장하기')
         btnSave.setStyleSheet('color:white; background:#424a9f')
         btnSave.resize(100,50)
-        btnSave.move(1810, 900)
+        btnSave.move(400, 700)
 
         #button이 어떤 역할을 할지 각각의 함수로 표현. 각 버튼의 역할 고정.
+        """
         btnGetImage.clicked.connect(self.pushButtonClicked)
         btnVertexSelect.clicked.connect(self.clickMethod1)
         btn2.clicked.connect(self.clickMethod2)
         btnDrag.clicked.connect(self.clickMethodDrag)
-        btnTempSave.clicked.connect(self.clickMethodDragComplete)
-        btnSave.clicked.connect(self.clickMethod3)
+        """
+        # btnTempSave.clicked.connect(self.clickMethodDragComplete)
+        # btnSave.clicked.connect(self.clickMethod3)
 
+    """
     # 사진 가져오기 함수
     def pushButtonClicked(self):
         fname = QFileDialog.getOpenFileName(self)
@@ -174,7 +203,9 @@ class UI_ProblemSetting(QWidget):
             sys.exit()
         if buttonReplay == QMessageBox.Cancel:
             print("저장되지 않았습니다.")
-
+    
+    """
+    """
     #radioButton
     def radioButtonUI(self):
         groupBox = QGroupBox(self)
@@ -201,28 +232,30 @@ class UI_ProblemSetting(QWidget):
             msg = "수동으로 펼치기 선택"
 
         #self.statusBar.showMessage(msg)
-
+    """
 
     #스크롤 선택
     def comboBoxUI(self):
+        """
         cbQNum = QComboBox(self)
         cbQNum.addItem('문제1')
         cbQNum.addItem('문제2')
         cbQNum.addItem('문제3')
         cbQNum.addItem('문제4')
         cbQNum.move(800, 140)
+        """
 
         cbQType = QComboBox(self)
         cbQType.addItem('객관식')
         cbQType.addItem('주관식')
         cbQType.addItem('서술형')
-        cbQType.move(800, 240)
+        cbQType.move(100, 240)
 
         #cb.activated[str].connect(self.onActivated)
 
     #화면 기본 설정
     def initUI(self):
-        self.showMaximized()
+        # self.showMaximized()
         self.setWindowTitle('채점 프로그램')
         self.show()
 

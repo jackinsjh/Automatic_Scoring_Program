@@ -18,6 +18,8 @@ from skimage.measure import compare_ssim
 import argparse
 import imutils
 
+from problemSetting import UI_ProblemSetting
+
 class Ui_blankPaperInput(object):
     problemNum = -1
 
@@ -25,8 +27,8 @@ class Ui_blankPaperInput(object):
     clickX, clickY = -1, -1
     clickCoordinates = []
 
-    def setupUi(self, blankPaperInput):  #problemNum
-        #self.problemNum = problemNum
+    def setupUi(self, blankPaperInput, problemNum):  #problemNum
+        self.problemNum = problemNum
 
         blankPaperInput.setObjectName("blankPaperInput")
         blankPaperInput.resize(800, 600)
@@ -137,12 +139,19 @@ class Ui_blankPaperInput(object):
 
 
 
+        self.window = QtWidgets.QMainWindow()
+        self.ui = UI_ProblemSetting()
+        # self.ui.setupUi(self.window)
+        # blankPaperInput.hide()
+        self.window.show()
+
 
 
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     blankPaperInput = QtWidgets.QMainWindow()
     ui = Ui_blankPaperInput()

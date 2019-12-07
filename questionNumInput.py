@@ -74,6 +74,7 @@ class Ui_QuestionNumInput(object):
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     questionNumInput = QtWidgets.QMainWindow()
     ui = Ui_QuestionNumInput()

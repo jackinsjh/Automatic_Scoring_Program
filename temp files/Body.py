@@ -3,6 +3,80 @@ import sys
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+import numpy as np
+import cv2
+
+from skimage.measure import compare_ssim
+import argparse
+import imutils
+
+
+class problemNumDialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(400, 300)
+        self.label = QtWidgets.QLabel(Dialog)
+        self.label.setGeometry(QtCore.QRect(80, 100, 181, 16))
+        self.label.setObjectName("label")
+        self.problemNumInput = QtWidgets.QTextEdit(Dialog)
+        self.problemNumInput.setGeometry(QtCore.QRect(80, 130, 201, 31))
+        self.problemNumInput.setObjectName("textEdit")
+        self.confirmButton = QtWidgets.QPushButton(Dialog)
+        self.confirmButton.setGeometry(QtCore.QRect(160, 180, 75, 31))
+        self.confirmButton.setObjectName("conFirmButton")
+        self.confirmButton.clicked.connect((self.onConfirmClicked))
+        self.problemNum = -1
+
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "문제 수 입력"))
+        self.label.setText(_translate("Dialog", "문제 수를 입력하세요"))
+        self.confirmButton.setText(_translate("Dialog", "확인"))
+
+    def onConfirmClicked(self):
+        self.problemNum = self.problemNumInput.toPlainText()
+        # ex = guiMain()
+        """
+        next = QDialog()
+        ui = setEmptyPaper()
+        ui.setupUi(Dialog)
+        Dialog.show()
+        """
+        empty = setEmptyPaper()
+        empty.exec_()
+
+
+
+
+
+class setEmptyPaper(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(400, 300)
+        self.confirmButton = QtWidgets.QPushButton(Dialog)
+        self.confirmButton.setGeometry(QtCore.QRect(160, 180, 75, 31))
+        self.confirmButton.setObjectName("conFirmButton")
+        self.confirmButton.clicked.connect((self.onButtonClicked))
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "빈 시험지 입력"))
+        self.confirmButton.setText(_translate("Dialog", "빈 시험지 입력"))
+
+    def onButtonClicked(self):
+        print('setEmpButtonClicked')
+
+
+
+
 
 class guiMain(QWidget):
     def __init__(self):
@@ -87,7 +161,7 @@ class guiMain(QWidget):
         btnGetImage = QPushButton('시험지 가져오기', self)
         btnGetImage.setToolTip('시험지 가져오기 버튼')
         btnGetImage.resize(btnGetImage.sizeHint())
-        btnGetImage.move(400, 200)
+        btnGetImage.move(800, 300)
 
         btnVertexSelect = QPushButton('꼭지점 설정', self)
         btnVertexSelect.setToolTip('꼭지점 설정 버튼')
@@ -124,15 +198,19 @@ class guiMain(QWidget):
         btnTempSave.clicked.connect(self.clickMethodDragComplete)
         btnSave.clicked.connect(self.clickMethod3)
 
-    #사진 가져오기 함수. 현재 제대로 작동 안함.
+    # 사진 가져오기 함수
     def pushButtonClicked(self):
         fname = QFileDialog.getOpenFileName(self)
         #self.label.setText(fname[0])    #해당 파일의 절대 경로
 
+        src = cv2.imread(fname[0], cv2.IMREAD_COLOR)
+        src = cv2.resize(src, (400, 400), interpolation=cv2.INTER_AREA)
+        cv2.imwrite('./buffer/resizeTemp.jpg', src)
+
         testSheet = QLabel(self)
         testSheet.resize(400, 400)
         testSheet.move(100, 100)
-        pixmap = QPixmap(fname[0])
+        pixmap = QPixmap('./buffer/resizeTemp.jpg')
         testSheet.setPixmap(pixmap)
         testSheet.show()
 
@@ -214,5 +292,12 @@ class guiMain(QWidget):
 
 #실행
 app = QApplication(sys.argv)
+"""
+Dialog = QDialog()
+ui = problemNumDialog()
+ui.setupUi(Dialog)
+Dialog.show()
+"""
 ex = guiMain()
 sys.exit(app.exec_())
+app.exec_()

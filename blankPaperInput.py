@@ -29,43 +29,6 @@ class Ui_blankPaperInput(object):
     problemCoordinateList = []
     problemIsAnswerList = []
 
-    def mouseCallbackROI(self, event, x, y, flags, param):
-
-        if event == cv2.EVENT_LBUTTONDOWN:
-            self.mouse_is_pressing = True
-            self.clickX, self.clickY = x, y
-            self.clickXFirst = x
-            self.clickYFirst = y
-            print(x)
-            print(y)
-
-
-        elif event == cv2.EVENT_LBUTTONUP:
-            self.mouse_is_pressing = False
-            # 원본 영역에서 두 점 (clickY, clickX), (x,y)로 구성되는 사각영역을 잘라내어 변수 img_cat이 참조하도록 합니다.
-            # ROI = thresh[clickY:y, clickX:x]
-            self.clickXLast = x
-            self.clickYLast = y
-            print(x)
-            print(y)
-            # print(ROI)
-            """
-            unique, counts = np.unique(ROI, return_counts=True)
-
-            print("validity of chosen area")
-            if 0 not in unique:
-                print(1)
-            elif 255 not in unique:
-                print(0)
-            else:
-                validity = counts[1] / (counts[0] + counts[1])
-                print(validity)
-
-            cv2.imshow("ROI", ROI)
-            """
-
-
-
 
     def setupUi(self, blankPaperInput, problemNum):  #problemNum
         self.problemNum = problemNum
@@ -179,7 +142,7 @@ class Ui_blankPaperInput(object):
 
 
 
-
+        """
         # 각 문제영역 지정
         curProblemCoordinates = []
         curProblemIsAnswers = []
@@ -227,11 +190,11 @@ class Ui_blankPaperInput(object):
         print(self.totalProblemCoordinates)
         print('final problem isAnswers:')
         print(self.totalIsAnswers)
-
+        """
 
 
         self.window = QtWidgets.QMainWindow()
-        self.ui = UI_ProblemSetting(self.totalProblemCoordinates, self.totalIsAnswers)
+        self.ui = UI_ProblemSetting([])
         # self.ui.setupUi(self.window)
         # blankPaperInput.hide()
         self.window.show()

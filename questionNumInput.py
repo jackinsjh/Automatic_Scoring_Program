@@ -70,8 +70,8 @@ class Ui_QuestionNumInput(object):
     def retranslateUi(self, questionNumInput):
         _translate = QtCore.QCoreApplication.translate
         questionNumInput.setWindowTitle(_translate("questionNumInput", "questionNumInput"))
-        self.confirmButton.setText(_translate("questionNumInput", "Open Window"))
-        self.label.setText(_translate("questionNumInput", "Click To Open Window"))
+        self.confirmButton.setText(_translate("questionNumInput", "Enter"))
+        self.label.setText(_translate("questionNumInput", "Enter the number of questions"))
 
 
 if __name__ == "__main__":

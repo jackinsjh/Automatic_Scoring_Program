@@ -29,27 +29,20 @@ class UI_ProblemSetting(QWidget):
     clickX, clickY = -1, -1
     clickCoordinates = []
 
-    def __init__(self, totalProblemCoordinates, totalIsAnswers):
+    def __init__(self, totalProblemList):
         super().__init__()
 
         #함수 역할
         #UI요소별로 함수 설정 해둠
         #move(a,b)로 위치 선정. 절대값. a가 왼쪽에서 얼마나 떨어지는지, b가 위에서 얼마나 아래인지.
 
-        self.totalProblemCoordinates = totalProblemCoordinates
-        self.totalIsAnswers = totalIsAnswers
-
-
-        print(self.totalProblemCoordinates)
-        print(self.totalIsAnswers)
-
-
-        self.prevProblemInfoList = problemInfoList
         self.curProblemType = -1
-        self.problemNum = len(self.prevProblemInfoList) + 1
-        self.curProblemAreas = []
-        self.curProblemIsAnswer = []
+        self.curProblemCoordinates = []
+        self.curProblemIsAnswers = []
         self.curProblemScore = -1
+
+        self.totalProblemList = totalProblemList
+        self.problemNum = len(totalProblemList) + 1
 
         self.comboBoxUI()
         # self.radioButtonUI()
@@ -58,9 +51,18 @@ class UI_ProblemSetting(QWidget):
         self.lineEditUI()
         self.initUI()
 
+
+
+
     #EditText
     def lineEditUI(self):
-        """
+
+        self.scoreInput = QLineEdit(self)
+        self.scoreInput.move(105, 535)
+        self.scoreInput.resize(100, 30)
+
+    """
+
         lineEditQNums = QLineEdit(self)
         lineEditQNums.move(800, 60)
 
@@ -68,11 +70,11 @@ class UI_ProblemSetting(QWidget):
         lineEditQMemo.move(1105, 270)
         lineEditQMemo.resize(270, 200)
         lineEditQMemo.setText("문제에 대한 메모 내용")
-        """
+    """
 
-        lineEditQScore = QLineEdit(self)
-        lineEditQScore.move(105, 535)
-        lineEditQScore.resize(100, 30)
+
+
+
 
     #TextView
     def labelUI(self):
@@ -189,12 +191,13 @@ class UI_ProblemSetting(QWidget):
         # btnSave.clicked.connect(self.clickMethod3)
 
     def onAreaButtonClicked(self):
-        fname = QFileDialog.getOpenFileName()
-        # self.label.setText(fname[0])    #해당 파일의 절대 경로
-        fileLoc = fname[0]
+
+        # 빈 시험지에서 한 문제의 영역들을 지정하고
+        # 각 영역마다 마킹되어야 하는 여부를 넣기
 
         # read unmarked image
-        src = cv2.imread(fileLoc, cv2.IMREAD_COLOR)
+        src = cv2.imread('./buffer/warpedBlankPaper.jpg', cv2.IMREAD_COLOR)
+        """
         height = src.shape[0]
         width = src.shape[1]
 
@@ -207,10 +210,9 @@ class UI_ProblemSetting(QWidget):
         print("Changed dimensions : ", src.shape)
 
         height, width, channel = src.shape
+        
 
-        cv2.imshow("UnmarkedOriginal", src)
-        cv2.setMouseCallback('UnmarkedOriginal', self.mouseCallbackSpot)
-
+        
         print("Click 4 spot of the image, starting from left-upper side, clockwise")
         print("After that, press any key")
         cv2.waitKey(0)
@@ -219,33 +221,84 @@ class UI_ProblemSetting(QWidget):
 
         srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
         self.clickCoordinates = []
+        """
 
 
+        # 각 문제영역 지정
+        curProblemCoordinates = []
+        curProblemIsAnswers = []
+
+        while True:
+            cv2.imshow("warpedUnmarkedPaper", src)
+            cv2.setMouseCallback('warpedUnmarkedPaper', self.mouseCallbackROI)
+
+            print("Drag the area of each problem, starting from left-upper side, to right-under side")
+            print("After that, press 1 if correct, press 2 if incorrect, else if all the choices are marked")
+            keyInput = cv2.waitKey(0)
+            dragCoordinates = [self.clickXFirst, self.clickYFirst, self.clickXLast, self.clickYLast]
+
+            cv2.destroyAllWindows()
+            print(dragCoordinates)
+
+            if keyInput == ord('1'):  # 정답
+                print('correct')
+                curProblemIsAnswers.append(True)
+                curProblemCoordinates.append(dragCoordinates)
+            elif keyInput == ord('2'):  # 오답
+                print('incorrect')
+                curProblemIsAnswers.append(False)
+                curProblemCoordinates.append(dragCoordinates)
+            else:  # 문제 영역 마킹 끝
+                break
+
+        self.curProblemCoordinates = curProblemCoordinates
+        self.curProblemIsAnswers = curProblemIsAnswers
+        print("added coordinates: {}".format(self.curProblemCoordinates))
+        print("added isAnswers: {}".format(self.curProblemIsAnswers))
 
 
+    def mouseCallbackROI(self, event, x, y, flags, param):
 
-        # assign 4 test paper's edges' coordinates and warp it to the original image size
-        # srcPoint=np.array([[66, 36], [699, 31], [734, 977], [41, 973]], dtype=np.float32) # for imageSet 1
-        # srcPoint=np.array([[72, 57], [692, 54], [758, 976], [39, 995]], dtype=np.float32) # for imageSet 2
-        dstPoint = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
-        matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
-        # dstUnmarked : warped testing paper with no mark as original size
-        warpedUnmarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
-        cv2.imwrite('./buffer/paper_{}.jpg'.format(self.problemNum), warpedUnmarkedPaper)
-        cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
-
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        if event == cv2.EVENT_LBUTTONDOWN:
+            self.mouse_is_pressing = True
+            self.clickX, self.clickY = x, y
+            self.clickXFirst = x
+            self.clickYFirst = y
+            print(x)
+            print(y)
 
 
+        elif event == cv2.EVENT_LBUTTONUP:
+            self.mouse_is_pressing = False
+            # 원본 영역에서 두 점 (clickY, clickX), (x,y)로 구성되는 사각영역을 잘라내어 변수 img_cat이 참조하도록 합니다.
+            # ROI = thresh[clickY:y, clickX:x]
+            self.clickXLast = x
+            self.clickYLast = y
+            print(x)
+            print(y)
+            # print(ROI)
+            """
+            unique, counts = np.unique(ROI, return_counts=True)
 
+            print("validity of chosen area")
+            if 0 not in unique:
+                print(1)
+            elif 255 not in unique:
+                print(0)
+            else:
+                validity = counts[1] / (counts[0] + counts[1])
+                print(validity)
 
+            cv2.imshow("ROI", ROI)
+            """
 
+    """
     def mouseCallbackSpot(self, event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDOWN:
             self.mouse_is_pressing = True
             self.clickX, self.clickY = x, y
             self.clickCoordinates.append([self.clickX, self.clickY])
+    """
 
     """
     # 사진 가져오기 함수
@@ -322,10 +375,12 @@ class UI_ProblemSetting(QWidget):
     def onNextButtonClicked(self):
         # 지금까지의 문제 정보 정리해 다음 UI에 넘기기
         self.window = QtWidgets.QMainWindow()
-        curProblem = eachProblemInfo(self.curProblemType, )
-        self.prevProblemInfoList.append()
-        self.ui = UI_ProblemSetting([])
+        self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
+                                                     self.curProblemIsAnswers, float(self.scoreInput.text())))
+        self.ui = UI_ProblemSetting(self.totalProblemList)
+        # problemSetting.hide()
         self.window.show()
+
 
     #스크롤 선택
     def comboBoxUI(self):

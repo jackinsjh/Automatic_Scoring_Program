@@ -234,23 +234,23 @@ class Ui_Form(object):
         self.scoreNameLabel_14.setText(_translate("Form", "문제수: "))
 
         #TODO: 시험지 이름 받아오기
-        testName = '[2016년 6월 영어]'
+        testName = '[2020년 수능 영어]'
         self.testNameLabel_5.setText(_translate("Form", testName))
 
         # TODO: 전체 점수, 현재 점수 받아오기
         totalScore = 100
-        myScore = 50
+        myScore = 70
         myScoreLabelText = str(myScore) + ' / ' + str(totalScore)
         self.myScoreLabel.setText(_translate("Form", myScoreLabelText))
 
         # TODO: 틀린 문제 str 형태로 나열되서 받아오기
-        wrongProblem = "2, 9, 10"
+        wrongProblem = "2, 6, 10"
         self.wrongProblemListLabel_5.setText(_translate("Form", wrongProblem))
 
         self.scoreNameLabel_14.setText(_translate("Form", "문제수: "))
 
         # TODO: 문제수 받아오기
-        problemNumber = '11'
+        problemNumber = '50'
         self.ProblemNumberLabel_5.setText(_translate("Form", problemNumber))
 
         self.myScoreLabel.setText(_translate("Form", "문제"))

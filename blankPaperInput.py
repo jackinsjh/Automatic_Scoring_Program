@@ -137,6 +137,20 @@ class Ui_blankPaperInput(object):
         cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
         cv2.imwrite('./buffer/warpedBlankPaper.jpg', warpedUnmarkedPaper)
         cv2.waitKey(0)
+
+
+
+        # 마킹 안 된 시험지 Blur, 흑백화 등 정제
+
+        # convert the images to grayscale
+        unmarkedPaper = cv2.cvtColor(warpedUnmarkedPaper, cv2.COLOR_BGR2GRAY)
+
+        # blur
+        for i in range(10):
+            unmarkedPaper = cv2.GaussianBlur(unmarkedPaper, (7, 7), 0)
+
+        cv2.imwrite('./buffer/processedBlankPaper.jpg', unmarkedPaper)
+
         cv2.destroyAllWindows()
 
 

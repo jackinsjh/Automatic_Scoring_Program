@@ -179,6 +179,7 @@ class UI_ProblemSetting(QWidget):
         btnSave.setStyleSheet('color:white; background:#424a9f')
         btnSave.resize(100,50)
         btnSave.move(400, 700)
+        btnSave.clicked.connect((self.onFinishButtonClicked))
 
         #button이 어떤 역할을 할지 각각의 함수로 표현. 각 버튼의 역할 고정.
         """
@@ -382,6 +383,22 @@ class UI_ProblemSetting(QWidget):
         self.window.show()
 
 
+    def onFinishButtonClicked(self):
+        # 문제 취합 종료하고 취합된 모든 문제 메타데이터 넘기기
+        """
+        self.window = QtWidgets.QMainWindow()
+        self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
+                                                     self.curProblemIsAnswers, float(self.scoreInput.text())))
+        self.ui = UI_ProblemSetting(self.totalProblemList)
+        # problemSetting.hide()
+        self.window.show()
+        """
+        self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
+                                                     self.curProblemIsAnswers, float(self.scoreInput.text())))
+
+        self.grader(self.totalProblemList)
+
+
     #스크롤 선택
     def comboBoxUI(self):
         """
@@ -405,7 +422,109 @@ class UI_ProblemSetting(QWidget):
     def problemTypeSelected(self, index):
         self.curProblemType = index
 
-    #화면 기본 설정
+    def mouseCallbackSpot(self, event, x, y, flags, param):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            self.mouse_is_pressing = True
+            self.clickX, self.clickY = x, y
+            self.clickCoordinates.append([self.clickX, self.clickY])
+
+    def grader(self, totalProblemList):
+        # totalProblemList 정보 정리해 놓기 - 문제영역들&정답여부, 각 문제 점수
+        print()
+        print("is totalProblemList given to grader?")
+        print(totalProblemList)
+        print()
+
+        """
+        각 마킹한 시험지들에서 마킹 정보를 뽑아 채점하고 점수 내기
+        """
+
+        # 마킹한 문제지들 입력
+        fname = QFileDialog.getOpenFileNames()
+        # self.label.setText(fname[0])    #해당 파일의 절대 경로
+        fileLocs = fname[0]
+
+        # 마킹 안된 시험지 읽어 오기
+        unmarkedPaper = cv2.imread('./buffer/processedBlankPaper.jpg', cv2.IMREAD_COLOR)
+
+
+        # 입력된 문제지들도 각각 모서리 정리, 그 후 버퍼에 저장해놓을까 그 정리된 파일들
+        for imageLoc in fileLocs:
+            # read marked image
+            src = cv2.imread(imageLoc, cv2.IMREAD_COLOR)
+            
+            # 너무 이미지 용량이 크다면 리사이징
+            height = src.shape[0]
+            width = src.shape[1]
+
+            if height >= width:
+                resizeScale = 1000 / height
+            else:
+                resizeScale = 1000 / width
+            src = cv2.resize(src, (int(width * resizeScale), int(height * resizeScale)), interpolation=cv2.INTER_AREA)
+
+            print("Changed dimensions : ", src.shape)
+
+            height, width, channel = src.shape
+
+            cv2.imshow("markedOriginal", src)
+            cv2.setMouseCallback('markedOriginal', self.mouseCallbackSpot)
+
+            print("Click 4 spot of the image, starting from left-upper side, clockwise")
+            print("After that, press any key")
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            print(self.clickCoordinates)
+
+            srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
+            self.clickCoordinates = []
+
+            # assign 4 test paper's edges' coordinates and warp it to the original image size
+            dstPoint = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
+            matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
+            # dstUnmarked : warped testing paper with marks as original size
+            warpedMarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
+            cv2.imshow("warpedmarkedPaper", warpedMarkedPaper)
+            # cv2.imwrite('./buffer/warpedBlankPaper.jpg', warpedMarkedPaper)
+            cv2.waitKey(0)
+
+
+
+            # 각 문제지들 처리하고 각각 채점 결과 내기
+            markedPaper = warpedMarkedPaper
+
+            # convert the images to grayscale
+            markedPaper = cv2.cvtColor(markedPaper, cv2.COLOR_BGR2GRAY)
+
+            # blur
+            for i in range(10):
+                markedPaper = cv2.GaussianBlur(markedPaper, (7, 7), 0)
+
+            # compute the Structural Similarity Index (SSIM) between the two
+            # images, ensuring that the difference image is returned
+            (score, diff) = compare_ssim(unmarkedPaper, markedPaper, full=True)
+            # diff = (diff * 255).astype("uint8")  # multiplication number can be changed!
+            diff = (diff * 255).astype("uint8")
+            # print("SSIM: {}".format(score))
+
+            # threshold the difference image, followed by finding contours to
+            # image binarization : classify every pixels as 0 or 1, not continuous one.
+            # obtain the regions of the two input images that differ
+            thresh = cv2.threshold(diff, 0, 255,
+                                   cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+
+            cv2.imshow("Diff", diff)
+            cv2.imshow("Thresh", thresh)
+
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+
+
+
+
+
+    # 화면 기본 설정
     def initUI(self):
         # self.showMaximized()
         self.setWindowTitle('채점 프로그램')

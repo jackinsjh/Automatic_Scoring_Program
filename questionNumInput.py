@@ -8,14 +8,16 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from blankPaperInput import Ui_blankPaperInput
+
+problemAmount = -1
+
 class Ui_QuestionNumInput(object):
 
-
-
     def confirmButtonClicked(self):
+        global problemAmount
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_blankPaperInput()
-        # self.problemNumInput.toPlainText()
+        problemAmount = self.problemNumInput.toPlainText()
         self.ui.setupUi(self.window, int(self.problemNumInput.toPlainText()))
         questionNumInput.hide()
         self.window.show()

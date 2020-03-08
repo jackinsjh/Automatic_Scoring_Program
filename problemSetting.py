@@ -12,7 +12,13 @@ from skimage.measure import compare_ssim
 import argparse
 import imutils
 
-
+class personResult:  # 한 사람 시험지의 채점된 최종 결과
+    def __init__(self, name, personResultDetail):
+        self.name = name
+        self.detail = personResultDetail
+        
+class personResultDetail:
+    
 
 class eachProblemInfo:
     def __init__(self, type, areas, isAnswer, score):
@@ -45,6 +51,7 @@ class UI_ProblemSetting(QWidget):
         self.curProblemCoordinates = []
         self.curProblemIsAnswers = []
         self.curProblemScore = -1
+        self.nameList = []
 
         self.totalProblemList = totalProblemList
         self.problemNum = len(totalProblemList) + 1
@@ -456,6 +463,23 @@ class UI_ProblemSetting(QWidget):
         fname = QFileDialog.getOpenFileNames()
         # self.label.setText(fname[0])    #해당 파일의 절대 경로
         fileLocs = fname[0]
+        
+        # 문제지 별로 이름 입력 - CSV 파일
+        self.nameList = []
+        nameFile = open("nameList.txt", "r")
+        nameCount = 0
+
+        while True:
+            name = nameFile.readline()
+            if not line or name == '\n':
+                break
+            else:
+                nameCount = nameCount + 1
+                self.nameList.append(name)
+
+        print("{} names entered".format(nameCount))
+        nameFile.close()
+
 
         # 마킹 안된 시험지 읽어 오기
         unmarkedPaper = cv2.imread('./buffer/processedBlankPaper.jpg', cv2.IMREAD_COLOR)
@@ -538,6 +562,8 @@ class UI_ProblemSetting(QWidget):
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
+            # 시험지에서 마킹된 곳 파악, 정답과 비교, 채점
+            
 
 
 

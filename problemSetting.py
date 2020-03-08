@@ -16,8 +16,6 @@ class personResult:  # 한 사람 시험지의 채점된 최종 결과
     def __init__(self, name, personResultDetail):
         self.name = name
         self.detail = personResultDetail
-        
-class personResultDetail:
     
 
 class eachProblemInfo:

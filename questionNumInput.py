@@ -9,15 +9,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from blankPaperInput import Ui_blankPaperInput
 
-problemAmount = -1
-
 class Ui_QuestionNumInput(object):
 
     def confirmButtonClicked(self):
-        global problemAmount
+        problemAmount = self.problemNumInput.toPlainText()  # 문제 갯수
+        testpaperAmount = self.paperNumInput.toPlainText()  # 한 시험지 세트의 총 페이지 수
         self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_blankPaperInput()
-        problemAmount = self.problemNumInput.toPlainText()
+        self.ui = Ui_blankPaperInput(problemAmount, testpaperAmount)
         self.ui.setupUi(self.window, int(self.problemNumInput.toPlainText()))
         questionNumInput.hide()
         self.window.show()
@@ -25,17 +23,22 @@ class Ui_QuestionNumInput(object):
     def setupUi(self, questionNumInput):
         questionNumInput.setObjectName("questionNumInput")
         questionNumInput.resize(400, 300)
-        self.label = QtWidgets.QLabel(questionNumInput)
-        self.label.setGeometry(QtCore.QRect(80, 100, 181, 16))
-        self.label.setObjectName("label")
+        self.labelQuestionNum = QtWidgets.QLabel(questionNumInput)
+        self.labelQuestionNum.setGeometry(QtCore.QRect(80, 60, 181, 16))
+        self.labelQuestionNum.setObjectName("labelQuestionNum")
         self.problemNumInput = QtWidgets.QTextEdit(questionNumInput)
-        self.problemNumInput.setGeometry(QtCore.QRect(80, 130, 201, 31))
-        self.problemNumInput.setObjectName("textEdit")
+        self.problemNumInput.setGeometry(QtCore.QRect(80, 90, 201, 31))
+        self.problemNumInput.setObjectName("textEditQuestionNum")
+        self.labelPaperNum = QtWidgets.QLabel(questionNumInput)
+        self.labelPaperNum.setGeometry(QtCore.QRect(80, 140, 181, 16))
+        self.labelPaperNum.setObjectName("labelPaperNum")
+        self.paperNumInput = QtWidgets.QTextEdit(questionNumInput)
+        self.paperNumInput.setGeometry(QtCore.QRect(80, 170, 201, 31))
+        self.paperNumInput.setObjectName("textEditPaperNum")
         self.confirmButton = QtWidgets.QPushButton(questionNumInput)
-        self.confirmButton.setGeometry(QtCore.QRect(160, 180, 75, 31))
+        self.confirmButton.setGeometry(QtCore.QRect(160, 220, 75, 31))
         self.confirmButton.setObjectName("conFirmButton")
         self.confirmButton.clicked.connect((self.confirmButtonClicked))
-        self.problemNum = -1
 
 
         self.retranslateUi(questionNumInput)
@@ -73,7 +76,8 @@ class Ui_QuestionNumInput(object):
         _translate = QtCore.QCoreApplication.translate
         questionNumInput.setWindowTitle(_translate("questionNumInput", "questionNumInput"))
         self.confirmButton.setText(_translate("questionNumInput", "Enter"))
-        self.label.setText(_translate("questionNumInput", "Enter the number of questions"))
+        self.labelQuestionNum.setText(_translate("questionNumInput", "Enter the number of questions"))
+        self.labelPaperNum.setText(_translate("questionNumInput", "Enter the number of pages of each test"))
 
 
 if __name__ == "__main__":

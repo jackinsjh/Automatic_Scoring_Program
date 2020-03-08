@@ -96,67 +96,61 @@ class Ui_blankPaperInput(object):
 
 
     def onInputButtonClicked(self):  # 파일 열고, 사각 지정해 수동으로 그림 늘리기
-        fname = QFileDialog.getOpenFileName()
+        fname = QFileDialog.getOpenFileNames()
         #self.label.setText(fname[0])    #해당 파일의 절대 경로
-        fileLoc = fname[0]
+        fileLocs = fname[0]
 
+        counter = 1
+        for imageLoc in fileLocs:
+            # read unmarked image
+            src = cv2.imread(imageLoc, cv2.IMREAD_COLOR)
+            height = src.shape[0]
+            width = src.shape[1]
 
+            if height >= width:
+                resizeScale = 1000 / height
+            else:
+                resizeScale = 1000 / width
+            src = cv2.resize(src, (int(width * resizeScale), int(height * resizeScale)), interpolation=cv2.INTER_AREA)
 
+            print("Changed dimensions : ", src.shape)
 
+            height, width, channel = src.shape
 
-        # read unmarked image
-        src = cv2.imread(fileLoc, cv2.IMREAD_COLOR)
-        height = src.shape[0]
-        width = src.shape[1]
+            cv2.imshow("UnmarkedOriginal", src)
+            cv2.setMouseCallback('UnmarkedOriginal', self.mouseCallbackSpot)
 
-        if height >= width:
-            resizeScale = 1000 / height
-        else:
-            resizeScale = 1000 / width
-        src = cv2.resize(src, (int(width * resizeScale), int(height * resizeScale)), interpolation=cv2.INTER_AREA)
+            print("Click 4 spot of the image, starting from left-upper side, clockwise")
+            print("After that, press any key")
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            print(self.clickCoordinates)
 
-        print("Changed dimensions : ", src.shape)
+            srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
+            self.clickCoordinates = []
 
-        height, width, channel = src.shape
+            # assign 4 test paper's edges' coordinates and warp it to the original image size
+            dstPoint = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
+            matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
+            # dstUnmarked : warped testing paper with no mark as original size
+            warpedUnmarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
+            cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
+            cv2.waitKey(0)
 
-        cv2.imshow("UnmarkedOriginal", src)
-        cv2.setMouseCallback('UnmarkedOriginal', self.mouseCallbackSpot)
+            # 마킹 안 된 시험지 Blur, 흑백화 등 정제
 
-        print("Click 4 spot of the image, starting from left-upper side, clockwise")
-        print("After that, press any key")
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        print(self.clickCoordinates)
+            # convert the images to grayscale
+            unmarkedPaper = cv2.cvtColor(warpedUnmarkedPaper, cv2.COLOR_BGR2GRAY)
 
-        srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
-        self.clickCoordinates = []
+            # blur
+            for i in range(10):
+                unmarkedPaper = cv2.GaussianBlur(unmarkedPaper, (7, 7), 0)
 
-        # assign 4 test paper's edges' coordinates and warp it to the original image size
-        dstPoint = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
-        matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
-        # dstUnmarked : warped testing paper with no mark as original size
-        warpedUnmarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
-        cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
-        cv2.imwrite('./buffer/warpedBlankPaper.jpg', warpedUnmarkedPaper)
-        cv2.waitKey(0)
+            cv2.imwrite('./buffer/processedBlankPaper_{}.jpg'.format(counter), unmarkedPaper)
 
+            cv2.destroyAllWindows()
 
-
-        # 마킹 안 된 시험지 Blur, 흑백화 등 정제
-
-        # convert the images to grayscale
-        unmarkedPaper = cv2.cvtColor(warpedUnmarkedPaper, cv2.COLOR_BGR2GRAY)
-
-        # blur
-        for i in range(10):
-            unmarkedPaper = cv2.GaussianBlur(unmarkedPaper, (7, 7), 0)
-
-        cv2.imwrite('./buffer/processedBlankPaper.jpg', unmarkedPaper)
-
-        cv2.destroyAllWindows()
-
-
-
+            counter = counter + 1
 
         """
         # 각 문제영역 지정

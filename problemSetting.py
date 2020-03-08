@@ -43,16 +43,8 @@ class UI_ProblemSetting(QWidget):
     def __init__(self, totalProblemList, problemAmount, testPaperAmount):
         super().__init__()
 
-        """
-        # 문제 수와 페이지 수 변수가 들어왔다면 처리
-        if problemAmount is not None and testPaperAmount is not None:
-            global problemAmount, testPaperAmount
-            problemAmount = problemAmountInput
-            testPaperAmount = testPaperAmountInput
-        """
-
         self.problemAmount = problemAmount
-        self. testPaperAmount = testPaperAmount
+        self.testPaperAmount = testPaperAmount
 
         #함수 역할
         #UI요소별로 함수 설정 해둠

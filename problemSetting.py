@@ -20,7 +20,12 @@ class eachProblemInfo:
         self.areas = areas
         self.isAnswer = isAnswer
         self.score = score
-
+    
+    def show(self):
+        print("Type : {}".format(self.type))
+        print("Areas : {}".format(self.areas))
+        print("isAnswer : {}".format(self.isAnswer))
+        print("score : {}".format(self.score))
 
 
 class UI_ProblemSetting(QWidget):
@@ -428,6 +433,14 @@ class UI_ProblemSetting(QWidget):
             self.clickX, self.clickY = x, y
             self.clickCoordinates.append([self.clickX, self.clickY])
 
+    def totalProblemListShow(self, totalProblemList):
+        count = 1
+        for problem in totalProblemList:
+            print("=== Problem {} ===".format(count))
+            problem.show()
+            print("==================")
+            count = count + 1
+
     def grader(self, totalProblemList):
         # totalProblemList 정보 정리해 놓기 - 문제영역들&정답여부, 각 문제 점수
         print()
@@ -446,9 +459,10 @@ class UI_ProblemSetting(QWidget):
 
         # 마킹 안된 시험지 읽어 오기
         unmarkedPaper = cv2.imread('./buffer/processedBlankPaper.jpg', cv2.IMREAD_COLOR)
+        # convert the images to grayscale
+        unmarkedPaper = cv2.cvtColor(unmarkedPaper, cv2.COLOR_BGR2GRAY)
 
-
-        # 입력된 문제지들도 각각 모서리 정리, 그 후 버퍼에 저장해놓을까 그 정리된 파일들
+        # 각각 문제지 모서리 정리, 프로세싱 후 비마킹 시험지와 대비, 그리고 채점
         for imageLoc in fileLocs:
             # read marked image
             src = cv2.imread(imageLoc, cv2.IMREAD_COLOR)
@@ -467,6 +481,7 @@ class UI_ProblemSetting(QWidget):
 
             height, width, channel = src.shape
 
+            # 현재 문제지 모서리 잘라내기
             cv2.imshow("markedOriginal", src)
             cv2.setMouseCallback('markedOriginal', self.mouseCallbackSpot)
 
@@ -490,7 +505,7 @@ class UI_ProblemSetting(QWidget):
 
 
 
-            # 각 문제지들 처리하고 각각 채점 결과 내기
+            # 현재 문제지 처리하고 각각 채점 결과 내기
             markedPaper = warpedMarkedPaper
 
             # convert the images to grayscale
@@ -499,6 +514,10 @@ class UI_ProblemSetting(QWidget):
             # blur
             for i in range(10):
                 markedPaper = cv2.GaussianBlur(markedPaper, (7, 7), 0)
+
+            # debug
+            cv2.imwrite('./buffer/debugMarked.jpg', markedPaper)
+            cv2.imwrite('./buffer/debugUnmarked.jpg', unmarkedPaper)
 
             # compute the Structural Similarity Index (SSIM) between the two
             # images, ensuring that the difference image is returned

@@ -15,8 +15,8 @@ class Ui_QuestionNumInput(object):
         problemAmount = self.problemNumInput.toPlainText()  # 문제 갯수
         testpaperAmount = self.paperNumInput.toPlainText()  # 한 시험지 세트의 총 페이지 수
         self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_blankPaperInput(problemAmount, testpaperAmount)
-        self.ui.setupUi(self.window, int(self.problemNumInput.toPlainText()))
+        self.ui = Ui_blankPaperInput()
+        self.ui.setupUi(self.window, problemAmount, testpaperAmount)
         questionNumInput.hide()
         self.window.show()
         

@@ -37,9 +37,22 @@ class UI_ProblemSetting(QWidget):
     mouse_is_pressing = False
     clickX, clickY = -1, -1
     clickCoordinates = []
+    problemAmount = -1
+    testPaperAmount = -1
 
-    def __init__(self, totalProblemList):
+    def __init__(self, totalProblemList, problemAmount, testPaperAmount):
         super().__init__()
+
+        """
+        # 문제 수와 페이지 수 변수가 들어왔다면 처리
+        if problemAmount is not None and testPaperAmount is not None:
+            global problemAmount, testPaperAmount
+            problemAmount = problemAmountInput
+            testPaperAmount = testPaperAmountInput
+        """
+
+        self.problemAmount = problemAmount
+        self. testPaperAmount = testPaperAmount
 
         #함수 역할
         #UI요소별로 함수 설정 해둠
@@ -388,7 +401,7 @@ class UI_ProblemSetting(QWidget):
         self.window = QtWidgets.QMainWindow()
         self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
                                                      self.curProblemIsAnswers, float(self.scoreInput.text())))
-        self.ui = UI_ProblemSetting(self.totalProblemList)
+        self.ui = UI_ProblemSetting(self.totalProblemList, self.problemAmount, self.testPaperAmount)
         # problemSetting.hide()
         self.window.show()
 

@@ -21,7 +21,8 @@ import imutils
 from problemSetting import UI_ProblemSetting
 
 class Ui_blankPaperInput(object):
-    problemNum = -1
+    problemAmount = -1
+    testpaperAmount = -1
 
     mouse_is_pressing = False
     clickX, clickY = -1, -1
@@ -30,8 +31,9 @@ class Ui_blankPaperInput(object):
     problemIsAnswerList = []
 
 
-    def setupUi(self, blankPaperInput, problemNum):  #problemNum
-        self.problemNum = problemNum
+    def setupUi(self, blankPaperInput, problemAmount, testpaperAmount):
+        self.problemAmount = problemAmount
+        self.testpaperAmount = testpaperAmount
 
         blankPaperInput.setObjectName("blankPaperInput")
         blankPaperInput.resize(800, 600)
@@ -208,7 +210,7 @@ class Ui_blankPaperInput(object):
 
 
         self.window = QtWidgets.QMainWindow()
-        self.ui = UI_ProblemSetting([])
+        self.ui = UI_ProblemSetting([], self.problemAmount, self.testpaperAmount)
         # self.ui.setupUi(self.window)
         # blankPaperInput.hide()
         self.window.show()

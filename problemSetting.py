@@ -13,23 +13,26 @@ import argparse
 import imutils
 
 class personResult:  # 한 사람 시험지의 채점된 최종 결과
-    def __init__(self, name, personResultDetail):
+    def __init__(self, name, isCorrectList, marks):
         self.name = name
-        self.detail = personResultDetail
+        self.isCorrectList = isCorrectList
+        self.marks = marks
     
 
 class eachProblemInfo:
-    def __init__(self, type, areas, isAnswer, score):
-        self.type = type
-        self.areas = areas
-        self.isAnswer = isAnswer
-        self.score = score
+    def __init__(self, type, areas, isAnswer, score, page):
+        self.type = type  # 문제 타입
+        self.areas = areas  # 문제 마킹 영역들
+        self.isAnswer = isAnswer  # 각 마킹 영역들이 맞는지 틀리는지의 리스트
+        self.score = score  # 이 문제의 점수
+        self.page = page  # 이 문제가 위치한 페이지
     
     def show(self):
         print("Type : {}".format(self.type))
         print("Areas : {}".format(self.areas))
         print("isAnswer : {}".format(self.isAnswer))
         print("score : {}".format(self.score))
+        print("page : {}".format(self.page))
 
 
 class UI_ProblemSetting(QWidget):
@@ -54,6 +57,7 @@ class UI_ProblemSetting(QWidget):
         self.curProblemCoordinates = []
         self.curProblemIsAnswers = []
         self.curProblemScore = -1
+        self.curProblemPage = -1
         self.nameList = []
 
         self.totalProblemList = totalProblemList
@@ -211,34 +215,11 @@ class UI_ProblemSetting(QWidget):
         # 빈 시험지에서 한 문제의 영역들을 지정하고
         # 각 영역마다 마킹되어야 하는 여부를 넣기
 
+        pageNum = int(input("Enter the page of the problem"))
+        pageNum = pageNum - 1
+
         # read unmarked image
-        src = cv2.imread('./buffer/warpedBlankPaper.jpg', cv2.IMREAD_COLOR)
-        """
-        height = src.shape[0]
-        width = src.shape[1]
-
-        if height >= width:
-            resizeScale = 1000 / height
-        else:
-            resizeScale = 1000 / width
-        src = cv2.resize(src, (int(width * resizeScale), int(height * resizeScale)), interpolation=cv2.INTER_AREA)
-
-        print("Changed dimensions : ", src.shape)
-
-        height, width, channel = src.shape
-        
-
-        
-        print("Click 4 spot of the image, starting from left-upper side, clockwise")
-        print("After that, press any key")
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        print(self.clickCoordinates)
-
-        srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
-        self.clickCoordinates = []
-        """
-
+        src = cv2.imread('./buffer/processedBlankPaper_{}.jpg'.format(pageNum), cv2.IMREAD_COLOR)
 
         # 각 문제영역 지정
         curProblemCoordinates = []
@@ -267,10 +248,14 @@ class UI_ProblemSetting(QWidget):
             else:  # 문제 영역 마킹 끝
                 break
 
+        self.curProblemPage = pageNum
         self.curProblemCoordinates = curProblemCoordinates
         self.curProblemIsAnswers = curProblemIsAnswers
+        print("problem page: {}".format(self.curProblemPage))
         print("added coordinates: {}".format(self.curProblemCoordinates))
         print("added isAnswers: {}".format(self.curProblemIsAnswers))
+
+
 
 
     def mouseCallbackROI(self, event, x, y, flags, param):
@@ -392,7 +377,8 @@ class UI_ProblemSetting(QWidget):
         # 지금까지의 문제 정보 정리해 다음 UI에 넘기기
         self.window = QtWidgets.QMainWindow()
         self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
-                                                     self.curProblemIsAnswers, float(self.scoreInput.text())))
+                                                     self.curProblemIsAnswers, float(self.scoreInput.text()),
+                                                     self.curProblemPage))
         self.ui = UI_ProblemSetting(self.totalProblemList, self.problemAmount, self.testPaperAmount)
         # problemSetting.hide()
         self.window.show()
@@ -409,7 +395,8 @@ class UI_ProblemSetting(QWidget):
         self.window.show()
         """
         self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
-                                                     self.curProblemIsAnswers, float(self.scoreInput.text())))
+                                                     self.curProblemIsAnswers, float(self.scoreInput.text()),
+                                                     self.curProblemPage))
 
         self.grader(self.totalProblemList)
 
@@ -452,7 +439,7 @@ class UI_ProblemSetting(QWidget):
             count = count + 1
 
     def grader(self, totalProblemList):
-        # totalProblemList 정보 정리해 놓기 - 문제영역들&정답여부, 각 문제 점수
+        # totalProblemList 정보 정리해 놓기 - 문제영역들&정답여부, 각 문제 점수이름 순서
         print()
         print("is totalProblemList given to grader?")
         print(totalProblemList)
@@ -461,11 +448,14 @@ class UI_ProblemSetting(QWidget):
         """
         각 마킹한 시험지들에서 마킹 정보를 뽑아 채점하고 점수 내기
         """
-
+        print("Please enter the names in nameList.txt file, in sequence")
+        print("Enter the pages, in order of name and page")
         # 마킹한 문제지들 입력
         fname = QFileDialog.getOpenFileNames()
-        # self.label.setText(fname[0])    #해당 파일의 절대 경로
+        # self.label.setText(fname[0])    #해당 파일들의 절대 경로. 파일 선택한 순서대로 정렬되네
         fileLocs = fname[0]
+
+        print(fileLocs)
         
         # 문제지 별로 이름 입력 - CSV 파일
         self.nameList = []
@@ -474,22 +464,36 @@ class UI_ProblemSetting(QWidget):
 
         while True:
             name = nameFile.readline()
-            if not line or name == '\n':
+            if name == '' or name == '\n':
                 break
             else:
                 nameCount = nameCount + 1
                 self.nameList.append(name)
+                print("name input: {}".format(name))
 
         print("{} names entered".format(nameCount))
         nameFile.close()
 
+        unmarkedPapers = []
 
-        # 마킹 안된 시험지 읽어 오기
-        unmarkedPaper = cv2.imread('./buffer/processedBlankPaper.jpg', cv2.IMREAD_COLOR)
-        # convert the images to grayscale
-        unmarkedPaper = cv2.cvtColor(unmarkedPaper, cv2.COLOR_BGR2GRAY)
+        for pageNum in range(self.testPaperAmount):
+            # 마킹 안된 시험지들 읽어 오기
+            unmarkedPaper = cv2.imread('./buffer/processedBlankPaper_{}.jpg'.format(pageNum), cv2.IMREAD_COLOR)
+            # convert the images to grayscale
+            unmarkedPaper = cv2.cvtColor(unmarkedPaper, cv2.COLOR_BGR2GRAY)
+            unmarkedPapers.append(unmarkedPaper)
+
+        pageNo = 0  # 시험의 몇 번째 페이지인지 카운트
+        personNo = 0  # 몇 번째 사람인지 카운트
+        isCorrectList = []  # 한 사람의 문제 정답 여부를 순서대로 배열
+        marks = []  # 한 사람이 마킹한 번호들
+        totalResults = []  # 최종 채점 결과들. personResult 클래스들의 집합임
+        curProblemNo = 0  # 현재 채점중인 문제 번호
 
         # 각각 문제지 모서리 정리, 프로세싱 후 비마킹 시험지와 대비, 그리고 채점
+
+
+
         for imageLoc in fileLocs:
             # read marked image
             src = cv2.imread(imageLoc, cv2.IMREAD_COLOR)
@@ -544,11 +548,11 @@ class UI_ProblemSetting(QWidget):
 
             # debug
             cv2.imwrite('./buffer/debugMarked.jpg', markedPaper)
-            cv2.imwrite('./buffer/debugUnmarked.jpg', unmarkedPaper)
+            cv2.imwrite('./buffer/debugUnmarked.jpg', unmarkedPapers[pageNo])
 
             # compute the Structural Similarity Index (SSIM) between the two
             # images, ensuring that the difference image is returned
-            (score, diff) = compare_ssim(unmarkedPaper, markedPaper, full=True)
+            (score, diff) = compare_ssim(unmarkedPapers[pageNo], markedPaper, full=True)
             # diff = (diff * 255).astype("uint8")  # multiplication number can be changed!
             diff = (diff * 255).astype("uint8")
             # print("SSIM: {}".format(score))
@@ -565,10 +569,54 @@ class UI_ProblemSetting(QWidget):
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
+
             # 시험지에서 마킹된 곳 파악, 정답과 비교, 채점
+
+            while self.totalProblemList[curProblemNo].page == pageNo:
+                bestChoice = -1
+                bestValidity = -1
+                for choiceNo in range(len(self.totalProblemList[curProblemNo].areas)):  # 가장 마킹이 뚜렷하게 된 곳 골라내기
+                    ROI = thresh[self.totalProblemList[curProblemNo].areas[choiceNo]]  # 마킹 부분을 잘라낸 이미지
+                    unique, counts = np.unique(ROI, return_counts=True)  # 마킹된 정도, 즉 validity 체크
+                    if 0 not in unique:
+                        validity = 1
+                    elif 255 not in unique:
+                        validity = 0
+                    else:
+                        validity = counts[1] / (counts[0] + counts[1])
+
+                    if validity > bestValidity:  # 만약 이 선택지의 마킹이 지금까지의 것들 중 가장 뚜렷하다면 이것을 마킹된 것으로 처리 갱신
+                        bestChoice = choiceNo
+                        bestValidity = validity
+
+                # 마킹한 것과 실제 답이 맞는지 확인
+                if self.totalProblemList[curProblemNo].isAnswer[bestChoice] is True:
+                    isCorrectList.append(True)
+                else:
+                    isCorrectList.append(False)
+                marks.append(bestChoice)
+                curProblemNo = curProblemNo + 1
             
+            # 한 사람 분이 끝났는지 체크
+            if pageNo == self.testPaperAmount:  # 한 사람의 시험지의 마지막 장에 도달함 -> 기록 저장과 파라미터들 리셋
+                totalResults.append(self.nameList[personNo], isCorrectList, marks)
+                isCorrectList = []
+                marks = []
+                pageNo = 0
+                personNo = personNo + 1
+            else:  # 아직 이 사람의 채점할 페이지가 남은 상태. 다음 페이지 채점 필요
+                pageNo = pageNo + 1
+
+            # pageNo 갱신 부분 필요
+            # 문제 여러장이면 중간에 잘리는데 이것도 고려 필요. isCorrectList marks 리셋 필요
+            # personNo 갱신 필요
 
 
+        # 임시 - 결과 보여주기
+        for i in totalResults:
+            print(i.name)
+            print(i.isCorrectList)
+            print(i.marks)
 
 
 

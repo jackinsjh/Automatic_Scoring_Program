@@ -100,7 +100,7 @@ class Ui_blankPaperInput(object):
         #self.label.setText(fname[0])    #해당 파일의 절대 경로
         fileLocs = fname[0]
 
-        counter = 1
+        counter = 0
         for imageLoc in fileLocs:
             # read unmarked image
             src = cv2.imread(imageLoc, cv2.IMREAD_COLOR)

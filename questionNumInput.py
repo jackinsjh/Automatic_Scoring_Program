@@ -77,7 +77,7 @@ class Ui_QuestionNumInput(object):
         questionNumInput.setWindowTitle(_translate("questionNumInput", "questionNumInput"))
         self.confirmButton.setText(_translate("questionNumInput", "Enter"))
         self.labelQuestionNum.setText(_translate("questionNumInput", "Enter the number of questions"))
-        self.labelPaperNum.setText(_translate("questionNumInput", "Enter the number of pages of each test"))
+        self.labelPaperNum.setText(_translate("questionNumInput", "Number of pages of each test"))
 
 
 if __name__ == "__main__":

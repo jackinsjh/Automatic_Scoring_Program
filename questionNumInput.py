@@ -12,8 +12,8 @@ from blankPaperInput import Ui_blankPaperInput
 class Ui_QuestionNumInput(object):
 
     def confirmButtonClicked(self):
-        problemAmount = self.problemNumInput.toPlainText()  # 문제 갯수
-        testpaperAmount = self.paperNumInput.toPlainText()  # 한 시험지 세트의 총 페이지 수
+        problemAmount = int(self.problemNumInput.toPlainText())  # 문제 갯수
+        testpaperAmount = int(self.paperNumInput.toPlainText())  # 한 시험지 세트의 총 페이지 수
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_blankPaperInput()
         self.ui.setupUi(self.window, problemAmount, testpaperAmount)

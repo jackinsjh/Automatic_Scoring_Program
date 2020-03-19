@@ -219,7 +219,7 @@ class UI_ProblemSetting(QWidget):
         pageNum = pageNum - 1
 
         # read unmarked image
-        src = cv2.imread('./buffer/processedBlankPaper_{}.jpg'.format(pageNum), cv2.IMREAD_COLOR)
+        src = cv2.imread('./buffer/unprocessedBlankPaper_{}.jpg'.format(pageNum), cv2.IMREAD_COLOR)
 
         # 각 문제영역 지정
         curProblemCoordinates = []
@@ -459,7 +459,7 @@ class UI_ProblemSetting(QWidget):
         
         # 문제지 별로 이름 입력 - CSV 파일
         self.nameList = []
-        nameFile = open("nameList.txt", "r")
+        nameFile = open("nameList.txt", "r", encoding='UTF8')
         nameCount = 0
 
         while True:
@@ -576,7 +576,13 @@ class UI_ProblemSetting(QWidget):
                 bestChoice = -1
                 bestValidity = -1
                 for choiceNo in range(len(self.totalProblemList[curProblemNo].areas)):  # 가장 마킹이 뚜렷하게 된 곳 골라내기
-                    ROI = thresh[self.totalProblemList[curProblemNo].areas[choiceNo]]  # 마킹 부분을 잘라낸 이미지
+                    ROI = thresh[self.totalProblemList[curProblemNo].areas[choiceNo][1]:self.totalProblemList[curProblemNo].areas[choiceNo][3],
+                          self.totalProblemList[curProblemNo].areas[choiceNo][0]:self.totalProblemList[curProblemNo].areas[choiceNo][2]]  # 마킹 부분을 잘라낸 이미지
+
+                    cv2.imshow("ROI", ROI)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
+
                     unique, counts = np.unique(ROI, return_counts=True)  # 마킹된 정도, 즉 validity 체크
                     if 0 not in unique:
                         validity = 1
@@ -594,12 +600,15 @@ class UI_ProblemSetting(QWidget):
                     isCorrectList.append(True)
                 else:
                     isCorrectList.append(False)
-                marks.append(bestChoice)
-                curProblemNo = curProblemNo + 1
+                marks.append(bestChoice + 1)
+                if curProblemNo == self.problemAmount - 1:
+                    break;
+                else:
+                    curProblemNo = curProblemNo + 1
             
             # 한 사람 분이 끝났는지 체크
-            if pageNo == self.testPaperAmount:  # 한 사람의 시험지의 마지막 장에 도달함 -> 기록 저장과 파라미터들 리셋
-                totalResults.append(self.nameList[personNo], isCorrectList, marks)
+            if pageNo == self.testPaperAmount - 1:  # 한 사람의 시험지의 마지막 장에 도달함 -> 기록 저장과 파라미터들 리셋
+                totalResults.append(personResult(self.nameList[personNo], isCorrectList, marks))
                 isCorrectList = []
                 marks = []
                 pageNo = 0

@@ -137,6 +137,8 @@ class Ui_blankPaperInput(object):
             cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
             cv2.waitKey(0)
 
+            cv2.imwrite('./buffer/unprocessedBlankPaper_{}.jpg'.format(counter), warpedUnmarkedPaper)
+
             # 마킹 안 된 시험지 Blur, 흑백화 등 정제
 
             # convert the images to grayscale

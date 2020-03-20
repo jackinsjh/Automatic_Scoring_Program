@@ -12,6 +12,8 @@ from skimage.measure import compare_ssim
 import argparse
 import imutils
 
+from totalResult import Ui_totalResult
+
 class personResult:  # 한 사람 시험지의 채점된 최종 결과
     def __init__(self, name, isCorrectList, marks):
         self.name = name
@@ -75,9 +77,12 @@ class UI_ProblemSetting(QWidget):
 
     #EditText
     def lineEditUI(self):
+        self.pageOfProblemInput = QLineEdit(self)
+        self.pageOfProblemInput.move(100, 350)
+        self.pageOfProblemInput.resize(100, 30)
 
         self.scoreInput = QLineEdit(self)
-        self.scoreInput.move(105, 535)
+        self.scoreInput.move(100, 535)
         self.scoreInput.resize(100, 30)
 
     """
@@ -113,6 +118,9 @@ class UI_ProblemSetting(QWidget):
 
         labelQType = QLabel('문제 분류 설정', self)
         labelQType.move(100, 200)
+
+        labelQPage = QLabel('문제가 위치하는 페이지', self)
+        labelQPage.move(100, 300)
 
         """
         labelTestSheetOpen = QLabel('시험지 펼치기', self)
@@ -160,8 +168,8 @@ class UI_ProblemSetting(QWidget):
         btnSetProblemArea = QPushButton('문제 영역 지정', self)
         btnSetProblemArea.setToolTip('문제 영역 지정')
         # btnSetProblemArea.resize(btnGetImage.sizeHint())
-        btnSetProblemArea.move(100, 300)
-        btnSetProblemArea.clicked.connect((self.onAreaButtonClicked))
+        btnSetProblemArea.move(100, 400)
+        btnSetProblemArea.clicked.connect(self.onAreaButtonClicked)
 
         """
         btnGetImage = QPushButton('시험지 가져오기', self)
@@ -215,8 +223,7 @@ class UI_ProblemSetting(QWidget):
         # 빈 시험지에서 한 문제의 영역들을 지정하고
         # 각 영역마다 마킹되어야 하는 여부를 넣기
 
-        pageNum = int(input("Enter the page of the problem"))
-        pageNum = pageNum - 1
+        pageNum = int(self.pageOfProblemInput.text()) - 1
 
         # read unmarked image
         src = cv2.imread('./buffer/unprocessedBlankPaper_{}.jpg'.format(pageNum), cv2.IMREAD_COLOR)
@@ -380,7 +387,7 @@ class UI_ProblemSetting(QWidget):
                                                      self.curProblemIsAnswers, float(self.scoreInput.text()),
                                                      self.curProblemPage))
         self.ui = UI_ProblemSetting(self.totalProblemList, self.problemAmount, self.testPaperAmount)
-        # problemSetting.hide()
+        problemSetting.hide()
         self.window.show()
 
 
@@ -620,13 +627,18 @@ class UI_ProblemSetting(QWidget):
             # 문제 여러장이면 중간에 잘리는데 이것도 고려 필요. isCorrectList marks 리셋 필요
             # personNo 갱신 필요
 
-
         # 임시 - 결과 보여주기
         for i in totalResults:
             print(i.name)
             print(i.isCorrectList)
             print(i.marks)
 
+        # 결과창 로드
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_totalResult()
+        self.ui.setupUi(self.window, totalProblemList, totalResults)
+        # problemSetting.hide()
+        self.window.show()
 
 
     # 화면 기본 설정

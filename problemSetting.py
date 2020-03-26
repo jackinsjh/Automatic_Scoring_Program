@@ -16,9 +16,9 @@ from totalResult import Ui_totalResult
 
 class personResult:  # 한 사람 시험지의 채점된 최종 결과
     def __init__(self, name, isCorrectList, marks):
-        self.name = name
-        self.isCorrectList = isCorrectList
-        self.marks = marks
+        self.name = name  # 이름
+        self.isCorrectList = isCorrectList  # 정답 여부 리스트
+        self.marks = marks  # 마킹 리스트
     
 
 class eachProblemInfo:
@@ -455,7 +455,7 @@ class UI_ProblemSetting(QWidget):
         """
         각 마킹한 시험지들에서 마킹 정보를 뽑아 채점하고 점수 내기
         """
-        print("Please enter the names in nameList.txt file, in sequence")
+        print("Please enter the names in nameList.txt file, in sequence, with no duplication")
         print("Enter the pages, in order of name and page")
         # 마킹한 문제지들 입력
         fname = QFileDialog.getOpenFileNames()

@@ -13,11 +13,19 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_totalResult(object):
+    """
     def resultPushButtonClicked(self, data):
         data.to_csv("result.csv")
+    """
 
-    def studentNameComboBoxClicked(self, name):
-        self.currentStudentNameLabel.setText(name)
+    def studentNameComboBoxClicked(self, name):  # 위 체크박스에서 다른 사람 선택시 화면 정보 변경
+        
+        # 해당 시험자 위치 탐색
+        personLocation = 0
+        while self.totalResults[personLocation].name != name:
+            personLocation = personLocation + 1
+
+        self.changeInfo(personLocation)
 
     def setupUi(self, Form, totalProblemList, totalResults):
 
@@ -66,18 +74,24 @@ class Ui_totalResult(object):
         self.studentNameComboBox.setMinimumSize(QtCore.QSize(90, 25))
         self.studentNameComboBox.setStyleSheet("font: 75 12pt \"나눔스퀘어 Bold\";")
         self.studentNameComboBox.setObjectName("studentNameComboBox")
-        self.studentNameComboBox.addItem("")
-        self.studentNameComboBox.addItem("")
-        self.studentNameComboBox.addItem("")
-        self.studentNameComboBox.addItem("")
+
+        """
+        for i in range(len(self.totalResults)):
+            self.studentNameComboBox.addItem("")
+        """
 
         # combobox 학생 이름 설정
-        self.studentNameList = ["박서연", "손재호", "하은영", "박소영"]  # TODO: 학생 이름 가져와야함
+        # self.studentNameList = ["박서연", "손재호", "하은영", "박소영"]  # TODO: 학생 이름 가져와야함
+        self.studentNameList = []  # TODO: 학생 이름 가져와야함
+        for person in self.totalResults:
+            self.studentNameList.append(person.name)
+
+            print("student added in result page : {}".format(person.name))
+
         self.studentNameComboBox.addItems(self.studentNameList)
 
-        # 학생 이름 선택시 label 변경
+        # 학생 이름 선택시 표시 정보들 변경
         self.studentNameComboBox.activated.connect(lambda: self.studentNameComboBoxClicked(self.studentNameComboBox.currentText()))
-
 
         self.gridLayout_18.addWidget(self.studentNameComboBox, 1, 3, 1, 1)
         self.studentLabel_5 = QtWidgets.QLabel(self.layoutWidget)
@@ -88,23 +102,25 @@ class Ui_totalResult(object):
         self.currentStudentNameLabel.setStyleSheet("font: 75 15pt \"나눔스퀘어 Bold\";")
         self.currentStudentNameLabel.setObjectName("currentStudentNameLabel")
         self.gridLayout_18.addWidget(self.currentStudentNameLabel, 1, 1, 1, 1)
-        self.testNameLabel_5 = QtWidgets.QLabel(self.layoutWidget)
+        # self.testNameLabel_5 = QtWidgets.QLabel(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.testNameLabel_5.sizePolicy().hasHeightForWidth())
-        self.testNameLabel_5.setSizePolicy(sizePolicy)
+        # sizePolicy.setHeightForWidth(self.testNameLabel_5.sizePolicy().hasHeightForWidth())
+        # self.testNameLabel_5.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("나눔스퀘어 ExtraBold")
         font.setPointSize(30)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(10)
+        """
         self.testNameLabel_5.setFont(font)
         self.testNameLabel_5.setStyleSheet("font: 81 30pt \"나눔스퀘어 ExtraBold\";")
         self.testNameLabel_5.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.testNameLabel_5.setObjectName("testNameLabel_5")
         self.gridLayout_18.addWidget(self.testNameLabel_5, 0, 0, 1, 4)
+        """
         spacerItem1 = QtWidgets.QSpacerItem(500, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_18.addItem(spacerItem1, 1, 4, 1, 1)
         self.gridLayout_17.addLayout(self.gridLayout_18, 0, 0, 1, 1)
@@ -116,17 +132,24 @@ class Ui_totalResult(object):
         self.scoreNameLabel_13.setStyleSheet("font: 81 15pt \"나눔스퀘어 ExtraBold\";")
         self.scoreNameLabel_13.setObjectName("scoreNameLabel_13")
         self.verticalLayout_5.addWidget(self.scoreNameLabel_13)
-        self.tableWidget = QtWidgets.QTableWidget(self.layoutWidget)
+        
+        # 좌측 문제 처리 결과 테이블
+        self.leftResultTable = QtWidgets.QTableWidget(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
-        self.tableWidget.setSizePolicy(sizePolicy)
-        self.tableWidget.setMinimumSize(QtCore.QSize(200, 525))
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(0)
-        self.tableWidget.setRowCount(0)
-        self.verticalLayout_5.addWidget(self.tableWidget)
+        sizePolicy.setHeightForWidth(self.leftResultTable.sizePolicy().hasHeightForWidth())
+        self.leftResultTable.setSizePolicy(sizePolicy)
+        self.leftResultTable.setMinimumSize(QtCore.QSize(200, 525))
+        self.leftResultTable.setObjectName("tableWidget")
+        self.leftResultTable.setColumnCount(5)
+        self.leftResultTable.setRowCount(len(self.totalProblemList))
+        # 헤더는 반드시 행과 열이 들어간 상태에서 삽입해야 함!
+        self.leftResultTable.setHorizontalHeaderLabels(["문제 유형", "문제 번호", "마킹", "정답", "정답 여부"])
+        # QTableWidgetItem 파라미터 int 넣는 건 안 되더라... str은 됨
+        # self.leftResultTable.setItem(0, 0, QtWidgets.QTableWidgetItem("7"))
+        self.verticalLayout_5.addWidget(self.leftResultTable)
+        
         self.gridLayout_19.addLayout(self.verticalLayout_5, 0, 0, 1, 1)
         spacerItem2 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_19.addItem(spacerItem2, 0, 1, 1, 1)
@@ -225,15 +248,19 @@ class Ui_totalResult(object):
         Form.setWindowTitle(_translate("Form", "Form"))
         self.ResultPushButton.setText(_translate("Form", "엑셀 저장"))
 
-        # combobox 학생 이름 설정
-        self.studentNameList = ["박서연", "손재호", "하은영", "박소영"]  # TODO: 학생 이름 가져와야함
+        """
+        화면 표시 정보 초기 설정
+        """
+
+        # self.studentNameList = ["박서연", "손재호", "하은영", "박소영"]  # TODO: 학생 이름 가져와야함
+        """
         for i in range(len(self.studentNameList)):
             self.studentNameComboBox.setItemText(i, _translate("Form", self.studentNameList[i]))
-
+        """
 
         self.studentLabel_5.setText(_translate("Form", "- 학생:"))
 
-        #현재 설정한 학생의 이름을 넣은 Label
+        # 현재 설정한 학생의 이름을 넣은 Label
         self.currentStudentNameLabel.setText(_translate("Form", str(self.studentNameComboBox.currentText())))
 
         self.scoreNameLabel_13.setText(_translate("Form", "문제 처리 결과"))
@@ -242,28 +269,73 @@ class Ui_totalResult(object):
         self.scoreLabel_5.setText(_translate("Form", "점수"))
         self.scoreNameLabel_14.setText(_translate("Form", "문제수: "))
 
+        """
         #TODO: 시험지 이름 받아오기
         testName = '[2020년 수능 영어]'
         self.testNameLabel_5.setText(_translate("Form", testName))
+        """
 
-        # TODO: 전체 점수, 현재 점수 받아오기
-        totalScore = 100
-        myScore = 70
-        myScoreLabelText = str(myScore) + ' / ' + str(totalScore)
-        self.myScoreLabel.setText(_translate("Form", myScoreLabelText))
-
-        # TODO: 틀린 문제 str 형태로 나열되서 받아오기
-        wrongProblem = "2, 6, 10"
-        self.wrongProblemListLabel_5.setText(_translate("Form", wrongProblem))
+        self.changeInfo(0)  # 맨 첫 번째 사람의 정보로 화면 정보 표시
 
         self.scoreNameLabel_14.setText(_translate("Form", "문제수: "))
 
-        # TODO: 문제수 받아오기
-        problemNumber = '50'
+        # 문제수 받아오기
+        problemNumber = str(len(self.totalProblemList))
         self.ProblemNumberLabel_5.setText(_translate("Form", problemNumber))
 
         self.myScoreLabel.setText(_translate("Form", "문제"))
 
+    def changeInfo(self, personLocation):
+
+        self.currentStudentNameLabel.setText(self.totalResults[personLocation].name)  # 이름 레이블 변경
+
+        # 전체 점수, 현재 점수 받아오기
+        totalScore = 0
+        myScore = 0
+        problemCounter = 0
+        for problem in self.totalProblemList:
+            totalScore = totalScore + problem.score
+            if self.totalResults[personLocation].isCorrectList[problemCounter] is True:
+                myScore = myScore + problem.score
+            problemCounter = problemCounter + 1
+
+        myScoreLabelText = str(myScore) + ' / ' + str(totalScore)
+        # self.myScoreLabel.setText(_translate("Form", myScoreLabelText))
+        self.myScoreLabel_5.setText(myScoreLabelText)
+
+        # 틀린 문제 str 형태로 나열되서 받아오기
+        wrongProblem = []
+        counter = 1
+        for isCorrect in self.totalResults[personLocation].isCorrectList:
+            if isCorrect is False:
+                wrongProblem.append(str(counter))
+            counter = counter + 1
+        wrongProblem = ', '.join(wrongProblem)
+        if wrongProblem == '':
+            wrongProblem = '없음'
+        # self.wrongProblemListLabel_5.setText(_translate("Form", wrongProblem))
+        self.wrongProblemListLabel_5.setText(wrongProblem)
+        
+        # 좌측 결과 테이블 데이터 삽입
+        self.leftResultTable.clearContents()
+        # QTableWidgetItem 파라미터 int 넣는 건 안 되더라... str은 됨
+        # self.leftResultTable.setItem(0, 0, QtWidgets.QTableWidgetItem("7"))
+        for problemNum in range(len(self.totalProblemList)):
+            self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem(str(self.totalProblemList[problemNum].type)))  # 문제 유형
+            self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(str(problemNum + 1)))  # 문제 번호
+            self.leftResultTable.setItem(problemNum, 2, QtWidgets.QTableWidgetItem(str(self.totalResults[personLocation].marks[problemNum])))  # 마킹
+            self.leftResultTable.setItem(problemNum, 3, QtWidgets.QTableWidgetItem(str(self.getAnswerOfProblem(self.totalProblemList[problemNum]))))  # 정답
+
+            if self.totalResults[personLocation].isCorrectList[problemNum] is True:  # 정답 여부
+                self.leftResultTable.setItem(problemNum, 4, QtWidgets.QTableWidgetItem("정답"))
+            else:
+                self.leftResultTable.setItem(problemNum, 4, QtWidgets.QTableWidgetItem("오답"))
+
+
+    def getAnswerOfProblem(self, problem):  # eachProblemInfo 클래스 object 를 넣으면 정답 선택지 번호를 리턴함
+        for choice in range(len(problem.areas)):
+            if problem.isAnswer[choice] is True:
+                return choice + 1
 
 if __name__ == "__main__":
     import sys

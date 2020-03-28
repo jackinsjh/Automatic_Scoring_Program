@@ -20,15 +20,15 @@ import imutils
 
 from problemSetting import UI_ProblemSetting
 
-class Ui_blankPaperInput(object):
-    problemAmount = -1
-    testpaperAmount = -1
+class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를 입력하는 창
+    problemAmount = -1  # 시험의 문제 수
+    testpaperAmount = -1  # 시험 1세트의 장 수
 
-    mouse_is_pressing = False
-    clickX, clickY = -1, -1
-    clickCoordinates = []
-    problemCoordinateList = []
-    problemIsAnswerList = []
+    mouse_is_pressing = False  # 마우스를 누르고 있는지 여부
+    clickX, clickY = -1, -1  # 클릭 지점 저장용 임시 변수
+    clickCoordinates = []  # 클릭한 지점들을 저장하는 임시 변수
+    problemCoordinateList = []  # 드래그된 문제 마킹 영역들을 저장하는 임시 변수
+    problemIsAnswerList = []  # 각 드래그된 마킹 영역들 별 정답 여부를 저장하는 임시 변수, True 와 False
 
 
     def setupUi(self, blankPaperInput, problemAmount, testpaperAmount):
@@ -57,35 +57,12 @@ class Ui_blankPaperInput(object):
         self.totalProblemCoordinates = []
         self.totalIsAnswers = []
 
-        """
-        # original code
-        blankPaperInput.setObjectName("blankPaperInput")
-        blankPaperInput.resize(568, 109)
-        self.centralwidget = QtWidgets.QWidget(blankPaperInput)
-        self.centralwidget.setObjectName("centralwidget")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(110, 30, 371, 41))
-        font = QtGui.QFont()
-        font.setPointSize(22)
-        self.label.setFont(font)
-        self.label.setObjectName("label")
-        blankPaperInput.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(blankPaperInput)
-        self.statusbar.setObjectName("statusbar")
-        blankPaperInput.setStatusBar(self.statusbar)
 
-        self.retranslateUi(blankPaperInput)
-        QtCore.QMetaObject.connectSlotsByName(blankPaperInput)
-        #print(self.problemNum)
-        """
-
-    def mouseCallbackSpot(self, event, x, y, flags, param):
+    def mouseCallbackSpot(self, event, x, y, flags, param):  # 마우스 클릭 좌표 저장용 메소드
         if event == cv2.EVENT_LBUTTONDOWN:
             self.mouse_is_pressing = True
             self.clickX, self.clickY = x, y
             self.clickCoordinates.append([self.clickX, self.clickY])
-
-
 
 
 
@@ -95,18 +72,19 @@ class Ui_blankPaperInput(object):
         self.pushButton.setText(_translate("blankPaperInput", "Add blank test paper"))
 
 
-    def onInputButtonClicked(self):  # 파일 열고, 사각 지정해 수동으로 그림 늘리기
-        fname = QFileDialog.getOpenFileNames()
-        #self.label.setText(fname[0])    #해당 파일의 절대 경로
-        fileLocs = fname[0]
+    def onInputButtonClicked(self):  # 마킹되지 않은 시험지 이미지를 열고, 각 사각 좌표를 지정해 수동으로 그림 늘리기
+        fname = QFileDialog.getOpenFileNames()  # 비 마킹 시험지들의 파일 읽기
+        #self.label.setText(fname[0]) # 해당 파일의 절대 경로
+        fileLocs = fname[0]  # 비 마킹 시험지 파일들의 절대 경로 리스트
 
-        counter = 0
-        for imageLoc in fileLocs:
-            # read unmarked image
+        counter = 0  # 임시 변수
+        for imageLoc in fileLocs:  # 각 시험지 이미지마다
+
             src = cv2.imread(imageLoc, cv2.IMREAD_COLOR)
-            height = src.shape[0]
-            width = src.shape[1]
+            height = src.shape[0]  # 시험지 이미지 높이
+            width = src.shape[1]  # 시험지 이미지 너비
 
+            # 시험지가 너무 커 처리가 힘든 경우, 리사이징
             if height >= width:
                 resizeScale = 1000 / height
             else:
@@ -137,9 +115,10 @@ class Ui_blankPaperInput(object):
             cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
             cv2.waitKey(0)
 
+            # 리사이징한 시험지 파일 저장
             cv2.imwrite('./buffer/unprocessedBlankPaper_{}.jpg'.format(counter), warpedUnmarkedPaper)
 
-            # 마킹 안 된 시험지 Blur, 흑백화 등 정제
+            # 마킹 안 된 시험지 Blur, 흑백화 등 이미지 정제
 
             # convert the images to grayscale
             unmarkedPaper = cv2.cvtColor(warpedUnmarkedPaper, cv2.COLOR_BGR2GRAY)
@@ -154,65 +133,11 @@ class Ui_blankPaperInput(object):
 
             counter = counter + 1
 
-        """
-        # 각 문제영역 지정
-        curProblemCoordinates = []
-        curProblemIsAnswers = []
-
-        for i in range(self.problemNum):
-            while True:
-                cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
-                cv2.setMouseCallback('warpedUnmarkedPaper', self.mouseCallbackROI)
-
-                print("Drag the area of each problem, starting from left-upper side, to right-under side")
-                print("After that, press 1 if correct, press 2 if incorrect, else if all the choices are marked")
-                keyInput = cv2.waitKey(0)
-                dragCoordinates = [self.clickXFirst, self.clickYFirst, self.clickXLast, self.clickYLast]
-
-                cv2.destroyAllWindows()
-                print(dragCoordinates)
-
-                if keyInput == ord('1'):  # 정답
-                    print('correct')
-                    curProblemIsAnswers.append(True)
-                    curProblemCoordinates.append(dragCoordinates)
-                elif keyInput == ord('2'):  # 오답
-                    print('incorrect')
-                    curProblemIsAnswers.append(False)
-                    curProblemCoordinates.append(dragCoordinates)
-                else:  # 문제 영역 마킹 끝
-                    break
-
-            self.totalProblemCoordinates.append(curProblemCoordinates)
-            print("added coordinates: {}".format(curProblemCoordinates))
-            self.totalIsAnswers.append(curProblemIsAnswers)
-            print("added isAnswers: {}".format(curProblemIsAnswers))
-            curProblemCoordinates = []
-            curProblemIsAnswers = []
-
-
-
-
-        # srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
-        # self.clickCoordinates = []
-
-
-        print('area designation completed')
-        print('final problem areas:')
-        print(self.totalProblemCoordinates)
-        print('final problem isAnswers:')
-        print(self.totalIsAnswers)
-        """
-
-
         self.window = QtWidgets.QMainWindow()
         self.ui = UI_ProblemSetting([], self.problemAmount, self.testpaperAmount)
         # self.ui.setupUi(self.window)
         # blankPaperInput.hide()
         self.window.show()
-
-
-
 
 
 if __name__ == "__main__":

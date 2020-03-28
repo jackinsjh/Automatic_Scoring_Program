@@ -9,13 +9,22 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from blankPaperInput import Ui_blankPaperInput
 
-class Ui_QuestionNumInput(object):
+"""
+실행
 
-    def confirmButtonClicked(self):
-        problemAmount = int(self.problemNumInput.toPlainText())  # 문제 갯수
+-이 파일이 프로그램의 첫 부분. 이 파일을 실행함으로써 프로그램이 실행됨
+-nameList.txt 에 학생들의 이름을 한 줄에 하나씩 공백 없이 입력해 두기
+-마킹되지 않은 시험지와 마킹된 학생들의 시험지 파일들을 준비. 현재 폴더에 테스트용 시험지들도 존재함
+-현재 일부 프로그램 안내들은 팝업 등의 GUI 방식이 아닌, 콘솔창에 안내가 나오고 있음. 수정 고려 필요
+"""
+
+class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 시험의 총 페이지 수를 질문.
+
+    def confirmButtonClicked(self):  # 확인 버튼 클릭시 동작
+        problemAmount = int(self.problemNumInput.toPlainText())  # 시험의 문제 갯수
         testpaperAmount = int(self.paperNumInput.toPlainText())  # 한 시험지 세트의 총 페이지 수
         self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_blankPaperInput()
+        self.ui = Ui_blankPaperInput()  # 다음 UI창인 blankPaperInput 창을 열기
         self.ui.setupUi(self.window, problemAmount, testpaperAmount)
         questionNumInput.hide()
         self.window.show()
@@ -40,37 +49,8 @@ class Ui_QuestionNumInput(object):
         self.confirmButton.setObjectName("conFirmButton")
         self.confirmButton.clicked.connect((self.confirmButtonClicked))
 
-
         self.retranslateUi(questionNumInput)
         QtCore.QMetaObject.connectSlotsByName(questionNumInput)
-
-        """
-        # original code
-        questionNumInput.setObjectName("questionNumInput")
-        questionNumInput.resize(371, 297)
-        self.centralwidget = QtWidgets.QWidget(questionNumInput)
-        self.centralwidget.setObjectName("centralwidget")
-        self.btn_open = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_open.setGeometry(QtCore.QRect(110, 140, 141, 51))
-        self.btn_open.setObjectName("btn_open")
-
-        self.btn_open.clicked.connect(self.openWindow)
-    
-        
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(70, 40, 211, 41))
-        font = QtGui.QFont()
-        font.setPointSize(16)
-        self.label.setFont(font)
-        self.label.setObjectName("label")
-        questionNumInput.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(questionNumInput)
-        self.statusbar.setObjectName("statusbar")
-        questionNumInput.setStatusBar(self.statusbar)
-
-        self.retranslateUi(questionNumInput)
-        QtCore.QMetaObject.connectSlotsByName(questionNumInput)
-        """
 
     def retranslateUi(self, questionNumInput):
         _translate = QtCore.QCoreApplication.translate

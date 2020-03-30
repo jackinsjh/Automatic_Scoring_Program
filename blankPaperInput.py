@@ -34,26 +34,27 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
     def setupUi(self, blankPaperInput, problemAmount, testpaperAmount):
         self.problemAmount = problemAmount
         self.testpaperAmount = testpaperAmount
+        self.blankPaperInput = blankPaperInput
 
-        blankPaperInput.setObjectName("blankPaperInput")
-        blankPaperInput.resize(800, 600)
-        self.centralwidget = QtWidgets.QWidget(blankPaperInput)
+        self.blankPaperInput.setObjectName("blankPaperInput")
+        self.blankPaperInput.resize(800, 600)
+        self.centralwidget = QtWidgets.QWidget(self.blankPaperInput)
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(320, 260, 171, 23))
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect((self.onInputButtonClicked))
-        blankPaperInput.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(blankPaperInput)
+        self.blankPaperInput.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self.blankPaperInput)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setObjectName("menubar")
-        blankPaperInput.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(blankPaperInput)
+        self.blankPaperInput.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self.blankPaperInput)
         self.statusbar.setObjectName("statusbar")
-        blankPaperInput.setStatusBar(self.statusbar)
+        self.blankPaperInput.setStatusBar(self.statusbar)
 
-        self.retranslateUi(blankPaperInput)
-        QtCore.QMetaObject.connectSlotsByName(blankPaperInput)
+        self.retranslateUi(self.blankPaperInput)
+        QtCore.QMetaObject.connectSlotsByName(self.blankPaperInput)
         self.totalProblemCoordinates = []
         self.totalIsAnswers = []
 
@@ -133,11 +134,11 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
 
             counter = counter + 1
 
-        self.window = QtWidgets.QMainWindow()
+        # self.window = QtWidgets.QMainWindow()
         self.ui = UI_ProblemSetting([], self.problemAmount, self.testpaperAmount)
         # self.ui.setupUi(self.window)
-        # blankPaperInput.hide()
-        self.window.show()
+        self.blankPaperInput.hide()
+        # self.window.show()  # 그 쓸데없이 나오던 작은 창.
 
 
 if __name__ == "__main__":

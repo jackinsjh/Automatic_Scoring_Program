@@ -234,7 +234,7 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "결과 화면"))
         self.ResultPushButton.setText(_translate("Form", "엑셀 저장"))
 
         """
@@ -297,8 +297,15 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         self.leftResultTable.clearContents()
         # QTableWidgetItem 파라미터 int 넣는 건 안 되더라... str은 됨
         for problemNum in range(len(self.totalProblemList)):
-            self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem(str(self.totalProblemList[problemNum].type)))  # 문제 유형
-            # self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(str(problemNum + 1)))  # 문제 번호
+            # 문제 유형
+            if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+                self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("객관식"))
+            elif self.totalProblemList[problemNum].type == 2:  # 주관식일 시
+                self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("주관식"))
+            elif self.totalProblemList[problemNum].type == 3:  # 서술형일 시
+                self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("서술형"))
+            else:  # error -> invalid problem type
+                print("error -> invalid problem type")
             self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(str(self.totalResults[personLocation].marks[problemNum])))  # 마킹
             self.leftResultTable.setItem(problemNum, 2, QtWidgets.QTableWidgetItem(str(self.getAnswerOfProblem(self.totalProblemList[problemNum]))))  # 정답
 

@@ -14,10 +14,12 @@ import imutils
 
 from totalResult import Ui_totalResult
 
+from descriptiveGradingUI import Ui_AutomaticScoringProgramUI10
+
 class personResult:  # 한 사람의 시험지를 채점한 최종 결과
     def __init__(self, name, isCorrectList, marks):
         self.name = name  # 이름
-        self.isCorrectList = isCorrectList  # 정답 여부 리스트
+        self.isCorrectList = isCorrectList  # 정답 여부 리스트, 서술형 문제의 경우 획득한 점수
         self.marks = marks  # 마킹 리스트
     
 
@@ -182,18 +184,17 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
             curProblemCoordinates = []
 
             # 문제 답 기입 영역을 마우스 드래그로 지정하고 저장
-            while True:
-                cv2.imshow("warpedUnmarkedPaper", src)
-                cv2.setMouseCallback('warpedUnmarkedPaper', self.mouseCallbackROI)
+            cv2.imshow("warpedUnmarkedPaper", src)
+            cv2.setMouseCallback('warpedUnmarkedPaper', self.mouseCallbackROI)
 
-                print("Drag the area of each problem, starting from left-upper side, to right-under side.")
-                print("After that, press any key")
-                keyInput = cv2.waitKey(0)
-                dragCoordinates = [self.clickXFirst, self.clickYFirst, self.clickXLast, self.clickYLast]
+            print("Drag the writing area of the problem, starting from left-upper side, to right-under side.")
+            print("After that, press any key")
+            keyInput = cv2.waitKey(0)
+            dragCoordinates = [self.clickXFirst, self.clickYFirst, self.clickXLast, self.clickYLast]
 
-                cv2.destroyAllWindows()
-                print(dragCoordinates)
-                curProblemCoordinates.append(dragCoordinates)
+            cv2.destroyAllWindows()
+            print(dragCoordinates)
+            curProblemCoordinates.append(dragCoordinates)
 
             self.curProblemPage = pageNum
             self.curProblemCoordinates = curProblemCoordinates
@@ -442,6 +443,20 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                         isCorrectList.append(False)
                     marks.append(bestChoice + 1)
 
+
+                elif self.totalProblemList[curProblemNo].type == 3:  # 문제가 서술형인 경우
+                    descriptiveUI = QtWidgets.QWidget()
+                    descriptiveUI_2 = Ui_AutomaticScoringProgramUI10()
+                    descriptiveUI_2.setupUi(descriptiveUI, markedPaper[self.totalProblemList[curProblemNo].areas[0][1]:
+                                     self.totalProblemList[curProblemNo].areas[0][3],
+                              self.totalProblemList[curProblemNo].areas[0][0]:
+                              self.totalProblemList[curProblemNo].areas[0][2]],
+                                          curProblemNo, self.totalProblemList[curProblemNo].score)
+                    descriptiveUI.show()
+                    while(descriptiveUI_2.curScore == -1):  # 버튼이 눌리기까지 대기
+                        QtCore.QCoreApplication.processEvents()
+                    isCorrectList.append(descriptiveUI_2.curScore)
+                    marks.append(-1)
 
                 if curProblemNo == self.problemAmount - 1:
                     break

@@ -16,16 +16,18 @@ from totalResult import Ui_totalResult
 
 from descriptiveGradingUI import Ui_AutomaticScoringProgramUI10
 
+import copy
+
 class personResult:  # 한 사람의 시험지를 채점한 최종 결과
     def __init__(self, name, isCorrectList, marks):
         self.name = name  # 이름
-        self.isCorrectList = isCorrectList  # 정답 여부 리스트, 서술형 문제의 경우 획득한 점수
+        self.isCorrectList = isCorrectList  # 정답 여부 True/False 리스트, 서술형 문제의 경우 획득한 점수가 대신 들어감
         self.marks = marks  # 마킹 리스트
     
 
 class eachProblemInfo:  # 각 문제의 정보를 저장하는 데 사용하는 클래스
     def __init__(self, type, areas, isAnswer, score, page):
-        self.type = type  # 문제 타입
+        self.type = type  # 문제 타입 -> 1: 객관식, 2: 주관식, 3: 서술형
         self.areas = areas  # 문제 마킹 영역 좌표들
         self.isAnswer = isAnswer  # 각 마킹 영역들이 맞는지 틀리는지의 리스트
         self.score = score  # 이 문제의 점수
@@ -375,7 +377,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
 
             # 현재 문제지를 blur 흑백화 등 처리하고 각각 채점 결과 내기
-            markedPaper = warpedMarkedPaper
+            markedPaper = copy.deepcopy(warpedMarkedPaper)
 
             # convert the images to grayscale
             markedPaper = cv2.cvtColor(markedPaper, cv2.COLOR_BGR2GRAY)
@@ -447,13 +449,13 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                 elif self.totalProblemList[curProblemNo].type == 3:  # 문제가 서술형인 경우
                     descriptiveUI = QtWidgets.QWidget()
                     descriptiveUI_2 = Ui_AutomaticScoringProgramUI10()
-                    descriptiveUI_2.setupUi(descriptiveUI, markedPaper[self.totalProblemList[curProblemNo].areas[0][1]:
+                    descriptiveUI_2.setupUi(descriptiveUI, warpedMarkedPaper[self.totalProblemList[curProblemNo].areas[0][1]:
                                      self.totalProblemList[curProblemNo].areas[0][3],
                               self.totalProblemList[curProblemNo].areas[0][0]:
                               self.totalProblemList[curProblemNo].areas[0][2]],
                                           curProblemNo, self.totalProblemList[curProblemNo].score)
                     descriptiveUI.show()
-                    while(descriptiveUI_2.curScore == -1):  # 버튼이 눌리기까지 대기
+                    while descriptiveUI_2.curScore == -1:  # 버튼이 눌리기까지 대기
                         QtCore.QCoreApplication.processEvents()
                     isCorrectList.append(descriptiveUI_2.curScore)
                     marks.append(-1)

@@ -66,7 +66,7 @@ class Ui_AutomaticScoringProgramUI10(object):
         self.problemNum.setObjectName("problemNum")
         self.maxScore = QtWidgets.QLabel(self.window)
         self.maxScore.setEnabled(True)
-        self.maxScore.setGeometry(QtCore.QRect(270, 190, 31, 41))
+        self.maxScore.setGeometry(QtCore.QRect(270, 190, 81, 41))
         self.maxScore.setMaximumSize(QtCore.QSize(81, 41))
         self.maxScore.setAcceptDrops(False)
         self.maxScore.setLayoutDirection(QtCore.Qt.LeftToRight)

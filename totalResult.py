@@ -272,8 +272,11 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         problemCounter = 0
         for problem in self.totalProblemList:
             totalScore = totalScore + problem.score
-            if self.totalResults[personLocation].isCorrectList[problemCounter] is True:
-                myScore = myScore + problem.score
+            if problem.type == 1:  # 객관식 문제인 경우   주관식인 경우 구현도 필요
+                if self.totalResults[personLocation].isCorrectList[problemCounter] is True:
+                    myScore = myScore + problem.score
+            elif problem.type == 3:  # 서술형 문제인 경우
+                myScore = myScore + self.totalResults[personLocation].isCorrectList[problemCounter]
             problemCounter = problemCounter + 1
 
         myScoreLabelText = str(myScore) + ' / ' + str(totalScore)
@@ -284,7 +287,7 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         wrongProblem = []
         counter = 1
         for isCorrect in self.totalResults[personLocation].isCorrectList:
-            if isCorrect is False:
+            if isCorrect is False or isCorrect == 0:
                 wrongProblem.append(str(counter))
             counter = counter + 1
         wrongProblem = ', '.join(wrongProblem)
@@ -349,9 +352,9 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         correctCounter = 0  # 맞은 갯수
         wrongCounter = 0  # 틀린 갯수
         for problem in self.totalResults[personLocation].isCorrectList:
-            if problem is True:
+            if problem is True or problem != 0:  # 맞는 문제인 경우 틀린 문제 리스트에서 배제
                 correctCounter = correctCounter + 1
-            else:
+            else:  # 틀린 문제인 경우 틀린 문제 리스트에 추가
                 wrongCounter = wrongCounter + 1
 
         self.rightResultTable.setItem(0, 0, QtWidgets.QTableWidgetItem(str(correctCounter)))  # 정답 수

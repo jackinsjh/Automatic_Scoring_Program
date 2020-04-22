@@ -127,10 +127,10 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         self.leftResultTable.setSizePolicy(sizePolicy)
         self.leftResultTable.setMinimumSize(QtCore.QSize(200, 525))
         self.leftResultTable.setObjectName("tableWidget")
-        self.leftResultTable.setColumnCount(4)
+        self.leftResultTable.setColumnCount(5)
         self.leftResultTable.setRowCount(len(self.totalProblemList))
         # 헤더는 반드시 행과 열이 들어간 상태에서 삽입해야 함!
-        self.leftResultTable.setHorizontalHeaderLabels(["문제 유형", "마킹", "정답", "정답 여부"])
+        self.leftResultTable.setHorizontalHeaderLabels(["문제 유형", "마킹", "정답 마킹", "정답 여부", "점수"])
         self.verticalLayout_5.addWidget(self.leftResultTable)
         
         self.gridLayout_19.addLayout(self.verticalLayout_5, 0, 0, 1, 1)
@@ -202,7 +202,8 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         self.ProblemNumberLabel_5.setStyleSheet("font: 81 15pt \"나눔스퀘어 ExtraBold\";")
         self.ProblemNumberLabel_5.setObjectName("ProblemNumberLabel_5")
         self.gridLayout_20.addWidget(self.ProblemNumberLabel_5, 0, 1, 1, 1)
-        self.rightResultTable = QtWidgets.QTableView(self.layoutWidget)
+
+        self.rightResultTable = QtWidgets.QTableWidget(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -210,7 +211,12 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         self.rightResultTable.setSizePolicy(sizePolicy)
         self.rightResultTable.setMinimumSize(QtCore.QSize(200, 200))
         self.rightResultTable.setObjectName("rightResultTable")
+        self.rightResultTable.setColumnCount(1)
+        self.rightResultTable.setRowCount(3)
+        # 헤더는 반드시 행과 열이 들어간 상태에서 삽입해야 함!
+        self.rightResultTable.setVerticalHeaderLabels(["맞은 갯수", "틀린 갯수", "정답률"])
         self.gridLayout_20.addWidget(self.rightResultTable, 1, 0, 1, 3)
+
         self.gridLayout_19.addLayout(self.gridLayout_20, 0, 4, 1, 1)
         spacerItem6 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_19.addItem(spacerItem6, 0, 5, 1, 1)
@@ -228,7 +234,7 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "결과 화면"))
         self.ResultPushButton.setText(_translate("Form", "엑셀 저장"))
 
         """
@@ -266,8 +272,11 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         problemCounter = 0
         for problem in self.totalProblemList:
             totalScore = totalScore + problem.score
-            if self.totalResults[personLocation].isCorrectList[problemCounter] is True:
-                myScore = myScore + problem.score
+            if problem.type == 1:  # 객관식 문제인 경우   주관식인 경우 구현도 필요
+                if self.totalResults[personLocation].isCorrectList[problemCounter] is True:
+                    myScore = myScore + problem.score
+            elif problem.type == 3:  # 서술형 문제인 경우
+                myScore = myScore + self.totalResults[personLocation].isCorrectList[problemCounter]
             problemCounter = problemCounter + 1
 
         myScoreLabelText = str(myScore) + ' / ' + str(totalScore)
@@ -278,7 +287,7 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         wrongProblem = []
         counter = 1
         for isCorrect in self.totalResults[personLocation].isCorrectList:
-            if isCorrect is False:
+            if isCorrect is False or isCorrect == 0:
                 wrongProblem.append(str(counter))
             counter = counter + 1
         wrongProblem = ', '.join(wrongProblem)
@@ -291,16 +300,66 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         self.leftResultTable.clearContents()
         # QTableWidgetItem 파라미터 int 넣는 건 안 되더라... str은 됨
         for problemNum in range(len(self.totalProblemList)):
-            self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem(str(self.totalProblemList[problemNum].type)))  # 문제 유형
-            # self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(str(problemNum + 1)))  # 문제 번호
-            self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(str(self.totalResults[personLocation].marks[problemNum])))  # 마킹
-            self.leftResultTable.setItem(problemNum, 2, QtWidgets.QTableWidgetItem(str(self.getAnswerOfProblem(self.totalProblemList[problemNum]))))  # 정답
+            # 문제 유형
+            if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+                self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("객관식"))
+            elif self.totalProblemList[problemNum].type == 2:  # 주관식일 시
+                self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("주관식"))
+            elif self.totalProblemList[problemNum].type == 3:  # 서술형일 시
+                self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("서술형"))
+            else:  # error -> invalid problem type
+                print("error -> invalid problem type")
 
-            if self.totalResults[personLocation].isCorrectList[problemNum] is True:  # 정답 여부
-                self.leftResultTable.setItem(problemNum, 3, QtWidgets.QTableWidgetItem("정답"))
-            else:
-                self.leftResultTable.setItem(problemNum, 3, QtWidgets.QTableWidgetItem("오답"))
+            # 마킹
+            if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+                self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(
+                    str(self.totalResults[personLocation].marks[problemNum])))
+            else:  # 주관식, 서술형일 시
+                self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem("-"))
 
+            # 정답
+            if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+                self.leftResultTable.setItem(problemNum, 2, QtWidgets.QTableWidgetItem(
+                    str(self.getAnswerOfProblem(self.totalProblemList[problemNum]))))
+            else:  # 주관식, 서술형일 시
+                self.leftResultTable.setItem(problemNum, 2, QtWidgets.QTableWidgetItem("-"))
+
+            # 정답 여부 - 주관식 구현 필요
+            if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+                if self.totalResults[personLocation].isCorrectList[problemNum] is True:
+                    self.leftResultTable.setItem(problemNum, 3, QtWidgets.QTableWidgetItem("정답"))
+                else:
+                    self.leftResultTable.setItem(problemNum, 3, QtWidgets.QTableWidgetItem("오답"))
+            elif self.totalProblemList[problemNum].type == 3:  # 서술형일 시
+                self.leftResultTable.setItem(problemNum, 3, QtWidgets.QTableWidgetItem("-"))
+                
+            # 점수 - 주관식 구현 필요
+            if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+                if self.totalResults[personLocation].isCorrectList[problemNum] is True:  # 정답 시
+                    self.leftResultTable.setItem(problemNum, 4, QtWidgets.QTableWidgetItem(
+                        str(self.totalProblemList[problemNum].score)))
+                else:  # 오답 시
+                    self.leftResultTable.setItem(problemNum, 4, QtWidgets.QTableWidgetItem("0"))
+            elif self.totalProblemList[problemNum].type == 3:  # 서술형일 시
+                self.leftResultTable.setItem(problemNum, 4, QtWidgets.QTableWidgetItem(
+                    str(self.totalResults[personLocation].isCorrectList[problemNum])))
+
+
+
+        # 우측 결과 테이블 데이터 삽입
+        self.rightResultTable.clearContents()
+        # QTableWidgetItem 파라미터 int 넣는 건 안 되더라... str은 됨
+        correctCounter = 0  # 맞은 갯수
+        wrongCounter = 0  # 틀린 갯수
+        for problem in self.totalResults[personLocation].isCorrectList:
+            if problem is True or problem != 0:  # 맞는 문제인 경우 틀린 문제 리스트에서 배제
+                correctCounter = correctCounter + 1
+            else:  # 틀린 문제인 경우 틀린 문제 리스트에 추가
+                wrongCounter = wrongCounter + 1
+
+        self.rightResultTable.setItem(0, 0, QtWidgets.QTableWidgetItem(str(correctCounter)))  # 정답 수
+        self.rightResultTable.setItem(1, 0, QtWidgets.QTableWidgetItem(str(wrongCounter)))  # 오답 수
+        self.rightResultTable.setItem(2, 0, QtWidgets.QTableWidgetItem(str((correctCounter/(correctCounter + wrongCounter)) * 100) + "%"))  # 정답률
 
     def getAnswerOfProblem(self, problem):  # eachProblemInfo 클래스 object 를 넣으면 해당 문제의 정답 선택지 번호를 리턴함
         for choice in range(len(problem.areas)):

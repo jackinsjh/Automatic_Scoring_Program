@@ -14,16 +14,20 @@ import imutils
 
 from totalResult import Ui_totalResult
 
+from descriptiveGradingUI import Ui_AutomaticScoringProgramUI10
+
+import copy
+
 class personResult:  # 한 사람의 시험지를 채점한 최종 결과
     def __init__(self, name, isCorrectList, marks):
         self.name = name  # 이름
-        self.isCorrectList = isCorrectList  # 정답 여부 리스트
+        self.isCorrectList = isCorrectList  # 정답 여부 True/False 리스트, 서술형 문제의 경우 획득한 점수가 대신 들어감
         self.marks = marks  # 마킹 리스트
     
 
 class eachProblemInfo:  # 각 문제의 정보를 저장하는 데 사용하는 클래스
     def __init__(self, type, areas, isAnswer, score, page):
-        self.type = type  # 문제 타입
+        self.type = type  # 문제 타입 -> 1: 객관식, 2: 주관식, 3: 서술형
         self.areas = areas  # 문제 마킹 영역 좌표들
         self.isAnswer = isAnswer  # 각 마킹 영역들이 맞는지 틀리는지의 리스트
         self.score = score  # 이 문제의 점수
@@ -66,7 +70,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         self.totalProblemList = totalProblemList
         self.problemNum = len(totalProblemList) + 1
 
-        self.comboBoxUI()
+        self.problemTypeComboBox = self.comboBoxUI()
         self.buttonUI()
         self.labelUI()
         self.lineEditUI()
@@ -140,40 +144,68 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         # read unmarked image
         src = cv2.imread('./buffer/unprocessedBlankPaper_{}.jpg'.format(pageNum), cv2.IMREAD_COLOR)
 
-        # 현재 문제의 마킹 영역 좌표와 각 영역의 정답 여부를 임시 저장하는 변수들
-        curProblemCoordinates = []
-        curProblemIsAnswers = []
+        if self.problemTypeComboBox.currentIndex() == 1:  # 객관식 문제인 경우
+            # 현재 문제의 마킹 영역 좌표와 각 영역의 정답 여부를 임시 저장하는 변수들
+            curProblemCoordinates = []
+            curProblemIsAnswers = []
 
-        # 각 마킹 영역을 마우스 드래그로 지정 후, 각 영역별로 마킹이 되어야 하는지의 여부를 기록
-        while True:
+            # 각 마킹 영역을 마우스 드래그로 지정 후, 각 영역별로 마킹이 되어야 하는지의 여부를 기록
+            while True:
+                cv2.imshow("warpedUnmarkedPaper", src)
+                cv2.setMouseCallback('warpedUnmarkedPaper', self.mouseCallbackROI)
+
+                print("Drag the area of each problem, starting from left-upper side, to right-under side")
+                print("After that, press 1 if correct, press 2 if incorrect, else if all the choices are marked")
+                keyInput = cv2.waitKey(0)
+                dragCoordinates = [self.clickXFirst, self.clickYFirst, self.clickXLast, self.clickYLast]
+
+                cv2.destroyAllWindows()
+                print(dragCoordinates)
+
+                if keyInput == ord('1'):  # 영역 지정후 1번 키를 누름 : 정답
+                    print('correct')
+                    curProblemIsAnswers.append(True)
+                    curProblemCoordinates.append(dragCoordinates)
+                elif keyInput == ord('2'):  # 영역 지정 후 2번 키를 누름 : 오답
+                    print('incorrect')
+                    curProblemIsAnswers.append(False)
+                    curProblemCoordinates.append(dragCoordinates)
+                else:  # 모든 영역을 지정했을 때 1, 2 외의 다른 키를 누름 : 문제 영역 마킹 끝
+                    break
+
+            self.curProblemPage = pageNum
+            self.curProblemCoordinates = curProblemCoordinates
+            self.curProblemIsAnswers = curProblemIsAnswers
+            print("problem page: {}".format(self.curProblemPage))
+            print("added coordinates: {}".format(self.curProblemCoordinates))
+            print("added isAnswers: {}".format(self.curProblemIsAnswers))
+
+        # 주관식, 서술형 문제인 경우
+        elif self.problemTypeComboBox.currentIndex() == 2 or self.problemTypeComboBox.currentIndex() == 3:
+            # 현재 문제의 마킹 영역 좌표와 각 영역의 정답 여부를 임시 저장하는 변수들
+            curProblemCoordinates = []
+
+            # 문제 답 기입 영역을 마우스 드래그로 지정하고 저장
             cv2.imshow("warpedUnmarkedPaper", src)
             cv2.setMouseCallback('warpedUnmarkedPaper', self.mouseCallbackROI)
 
-            print("Drag the area of each problem, starting from left-upper side, to right-under side")
-            print("After that, press 1 if correct, press 2 if incorrect, else if all the choices are marked")
+            print("Drag the writing area of the problem, starting from left-upper side, to right-under side.")
+            print("After that, press any key")
             keyInput = cv2.waitKey(0)
             dragCoordinates = [self.clickXFirst, self.clickYFirst, self.clickXLast, self.clickYLast]
 
             cv2.destroyAllWindows()
             print(dragCoordinates)
+            curProblemCoordinates.append(dragCoordinates)
 
-            if keyInput == ord('1'):  # 영역 지정후 1번 키를 누름 : 정답
-                print('correct')
-                curProblemIsAnswers.append(True)
-                curProblemCoordinates.append(dragCoordinates)
-            elif keyInput == ord('2'):  # 영역 지정 후 2번 키를 누름 : 오답
-                print('incorrect')
-                curProblemIsAnswers.append(False)
-                curProblemCoordinates.append(dragCoordinates)
-            else:  # 모든 영역을 지정했을 때 1, 2 외의 다른 키를 누름 : 문제 영역 마킹 끝
-                break
+            self.curProblemPage = pageNum
+            self.curProblemCoordinates = curProblemCoordinates
+            self.curProblemIsAnswers = []
+            print("problem page: {}".format(self.curProblemPage))
+            print("added coordinates: {}".format(self.curProblemCoordinates))
 
-        self.curProblemPage = pageNum
-        self.curProblemCoordinates = curProblemCoordinates
-        self.curProblemIsAnswers = curProblemIsAnswers
-        print("problem page: {}".format(self.curProblemPage))
-        print("added coordinates: {}".format(self.curProblemCoordinates))
-        print("added isAnswers: {}".format(self.curProblemIsAnswers))
+        else:  # invalid problem type
+            print("Error")
 
 
 
@@ -199,13 +231,13 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
     def onNextButtonClicked(self):  # 다음 문제로 넘어가기 버튼을 눌렀을 때의 동작
         # 지금까지의 문제 정보 정리해 다음 UI에 넘기기
-        self.window = QtWidgets.QMainWindow()
+        # self.window = QtWidgets.QMainWindow()
         self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
                                                      self.curProblemIsAnswers, float(self.scoreInput.text()),
                                                      self.curProblemPage))
         self.ui = UI_ProblemSetting(self.totalProblemList, self.problemAmount, self.testPaperAmount)
-        problemSetting.hide()
-        self.window.show()
+        self.hide()
+        # self.window.show()
 
 
     def onFinishButtonClicked(self):  # 문제 메타데이터 입력 완료 버튼을 눌렀을 때의 동작.
@@ -221,15 +253,20 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
     def comboBoxUI(self):  # 문제 유형 지정 콤보박스
         cbQType = QComboBox(self)
+        cbQType.addItem('선택하세요')
         cbQType.addItem('객관식')
         cbQType.addItem('주관식')
         cbQType.addItem('서술형')
         cbQType.move(100, 240)
-        cbQType.activated.connect(self.problemTypeSelected)
+        # cbQType.activated.connect(self.problemTypeSelected)
+        cbQType.currentIndexChanged.connect(self.problemTypeSelected)
+        return cbQType
 
 
-    def problemTypeSelected(self, index):
-        self.curProblemType = index
+    def problemTypeSelected(self):
+        if self.problemTypeComboBox.currentIndex() == 0:
+            print("Error. Problem type is not selected")
+        self.curProblemType = self.problemTypeComboBox.currentIndex()  # 1: 객관식  2: 주관식  3: 서술형
 
     def mouseCallbackSpot(self, event, x, y, flags, param):  # 마우스 클릭 지점 인식용 메소드
         if event == cv2.EVENT_LBUTTONDOWN:
@@ -340,7 +377,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
 
             # 현재 문제지를 blur 흑백화 등 처리하고 각각 채점 결과 내기
-            markedPaper = warpedMarkedPaper
+            markedPaper = copy.deepcopy(warpedMarkedPaper)
 
             # convert the images to grayscale
             markedPaper = cv2.cvtColor(markedPaper, cv2.COLOR_BGR2GRAY)
@@ -376,34 +413,53 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
             # 시험지에서 마킹된 곳 파악, 정답과 비교, 채점
 
             while self.totalProblemList[curProblemNo].page == pageNo:
-                bestChoice = -1
-                bestValidity = -1
-                for choiceNo in range(len(self.totalProblemList[curProblemNo].areas)):  # 가장 마킹이 뚜렷하게 된 곳 골라내기
-                    ROI = thresh[self.totalProblemList[curProblemNo].areas[choiceNo][1]:self.totalProblemList[curProblemNo].areas[choiceNo][3],
-                          self.totalProblemList[curProblemNo].areas[choiceNo][0]:self.totalProblemList[curProblemNo].areas[choiceNo][2]]  # 마킹 부분을 잘라낸 이미지
+                if self.totalProblemList[curProblemNo].type == 1:  # 문제가 객관식인 경우
+                    bestChoice = -1
+                    bestValidity = -1
+                    for choiceNo in range(len(self.totalProblemList[curProblemNo].areas)):  # 가장 마킹이 뚜렷하게 된 곳 골라내기
+                        ROI = thresh[self.totalProblemList[curProblemNo].areas[choiceNo][1]:
+                                     self.totalProblemList[curProblemNo].areas[choiceNo][3],
+                              self.totalProblemList[curProblemNo].areas[choiceNo][0]:
+                              self.totalProblemList[curProblemNo].areas[choiceNo][2]]  # 마킹 부분을 잘라낸 이미지
 
-                    cv2.imshow("ROI", ROI)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                        cv2.imshow("ROI", ROI)
+                        cv2.waitKey(0)
+                        cv2.destroyAllWindows()
 
-                    unique, counts = np.unique(ROI, return_counts=True)  # 마킹된 정도, 즉 validity 체크
-                    if 0 not in unique:
-                        validity = 1
-                    elif 255 not in unique:
-                        validity = 0
+                        unique, counts = np.unique(ROI, return_counts=True)  # 마킹된 정도, 즉 validity 체크
+                        if 0 not in unique:
+                            validity = 1
+                        elif 255 not in unique:
+                            validity = 0
+                        else:
+                            validity = counts[1] / (counts[0] + counts[1])
+
+                        if validity > bestValidity:  # 만약 이 선택지의 마킹이 지금까지의 것들 중 가장 뚜렷하다면 이것을 마킹된 것으로 처리 갱신
+                            bestChoice = choiceNo
+                            bestValidity = validity
+
+                    # 마킹한 것과 실제 답이 맞는지 확인
+                    if self.totalProblemList[curProblemNo].isAnswer[bestChoice] is True:
+                        isCorrectList.append(True)
                     else:
-                        validity = counts[1] / (counts[0] + counts[1])
+                        isCorrectList.append(False)
+                    marks.append(bestChoice + 1)
 
-                    if validity > bestValidity:  # 만약 이 선택지의 마킹이 지금까지의 것들 중 가장 뚜렷하다면 이것을 마킹된 것으로 처리 갱신
-                        bestChoice = choiceNo
-                        bestValidity = validity
 
-                # 마킹한 것과 실제 답이 맞는지 확인
-                if self.totalProblemList[curProblemNo].isAnswer[bestChoice] is True:
-                    isCorrectList.append(True)
-                else:
-                    isCorrectList.append(False)
-                marks.append(bestChoice + 1)
+                elif self.totalProblemList[curProblemNo].type == 3:  # 문제가 서술형인 경우
+                    descriptiveUI = QtWidgets.QWidget()
+                    descriptiveUI_2 = Ui_AutomaticScoringProgramUI10()
+                    descriptiveUI_2.setupUi(descriptiveUI, warpedMarkedPaper[self.totalProblemList[curProblemNo].areas[0][1]:
+                                     self.totalProblemList[curProblemNo].areas[0][3],
+                              self.totalProblemList[curProblemNo].areas[0][0]:
+                              self.totalProblemList[curProblemNo].areas[0][2]],
+                                          curProblemNo, self.totalProblemList[curProblemNo].score)
+                    descriptiveUI.show()
+                    while descriptiveUI_2.curScore == -1:  # 버튼이 눌리기까지 대기
+                        QtCore.QCoreApplication.processEvents()
+                    isCorrectList.append(descriptiveUI_2.curScore)
+                    marks.append(-1)
+
                 if curProblemNo == self.problemAmount - 1:
                     break
                 else:
@@ -429,7 +485,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_totalResult()
         self.ui.setupUi(self.window, totalProblemList, totalResults)
-        # problemSetting.hide()
+        self.hide()
         self.window.show()
 
 
@@ -443,8 +499,8 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    problemSetting = QtWidgets.QMainWindow()
+    # problemSetting = QtWidgets.QMainWindow()
     ui = UI_ProblemSetting()
-    ui.setupUi(problemSetting)
-    problemSetting.show()
+    # ui.setupUi(problemSetting)
+    # problemSetting.show()
     sys.exit(app.exec_())

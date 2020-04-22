@@ -151,13 +151,12 @@ for m in range(len(box1)):
         gradient = float(delta_y) / float(delta_x)
         if gradient < 0.25:
             count = count + 1
-            
+
     #measure number plate size
     if count > f_count:
         select = m
         f_count = count;
         plate_width = delta_x
-
 
 number_plate = copy_img[box1[select][1]-10:box1[select][1] + 20, box1[select][0]-10:140+box1[select][0]]
 

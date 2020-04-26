@@ -31,10 +31,11 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
     problemIsAnswerList = []  # 각 드래그된 마킹 영역들 별 정답 여부를 저장하는 임시 변수, True 와 False
 
 
-    def setupUi(self, blankPaperInput, problemAmount, testpaperAmount):
+    def setupUi(self, blankPaperInput, problemAmount, testpaperAmount, gradeWithOCR):
         self.problemAmount = problemAmount
         self.testpaperAmount = testpaperAmount
         self.blankPaperInput = blankPaperInput
+        self.gradeWithOCR = gradeWithOCR
 
         self.blankPaperInput.setObjectName("blankPaperInput")
         self.blankPaperInput.resize(800, 600)
@@ -135,7 +136,7 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
             counter = counter + 1
 
         # self.window = QtWidgets.QMainWindow()
-        self.ui = UI_ProblemSetting([], self.problemAmount, self.testpaperAmount)
+        self.ui = UI_ProblemSetting([], self.problemAmount, self.testpaperAmount, self.gradeWithOCR)
         # self.ui.setupUi(self.window)
         self.blankPaperInput.hide()
         # self.window.show()  # 그 쓸데없이 나오던 작은 창.

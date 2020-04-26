@@ -7,6 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import numpy as np
 import cv2
+import pytesseract
 
 from skimage.measure import compare_ssim
 import argparse
@@ -26,12 +27,13 @@ class personResult:  # 한 사람의 시험지를 채점한 최종 결과
     
 
 class eachProblemInfo:  # 각 문제의 정보를 저장하는 데 사용하는 클래스
-    def __init__(self, type, areas, isAnswer, score, page):
+    def __init__(self, type, areas, isAnswer, score, page, OCRsubjectiveAnswer):
         self.type = type  # 문제 타입 -> 1: 객관식, 2: 주관식, 3: 서술형
         self.areas = areas  # 문제 마킹 영역 좌표들
         self.isAnswer = isAnswer  # 각 마킹 영역들이 맞는지 틀리는지의 리스트
         self.score = score  # 이 문제의 점수
         self.page = page  # 이 문제가 위치하는 페이지
+        self.OCRsubjectiveAnswer = OCRsubjectiveAnswer  # OCR 주관식 채점시에만 사용 - 주관식 정답 텍스트
     
     def show(self):  # 디버깅용 문제 정보 열람 메소드
         print("Type : {}".format(self.type))
@@ -49,12 +51,14 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
     problemAmount = -1  # 시험의 문제 수
     testPaperAmount = -1  # 시험의 총 페이지 수
 
-    def __init__(self, totalProblemList, problemAmount, testPaperAmount):
+    def __init__(self, totalProblemList, problemAmount, testPaperAmount, gradeWithOCR):
         super().__init__()
         
         # 넘어온 파라미터들 저장
+        self.totalProblemList = totalProblemList  # 모든 시험 문제들의 메타데이터 저장
         self.problemAmount = problemAmount  # 넘어온 문제 수 정보 저장
         self.testPaperAmount = testPaperAmount  # 넘어온 페이지 수 정보 저장
+        self.gradeWithOCR = gradeWithOCR  # 넘어온 주관식 OCR 채점 여부 저장 - True/False
 
         #함수 역할
         #UI요소별로 함수 설정 해둠
@@ -67,7 +71,6 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         self.curProblemPage = -1
         self.nameList = []
 
-        self.totalProblemList = totalProblemList
         self.problemNum = len(totalProblemList) + 1
 
         self.problemTypeComboBox = self.comboBoxUI()
@@ -86,6 +89,10 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         self.scoreInput = QLineEdit(self)
         self.scoreInput.move(100, 535)
         self.scoreInput.resize(100, 30)
+
+        self.OCRsubjectiveAnswerInput = QLineEdit(self)
+        self.OCRsubjectiveAnswerInput.move(100, 580)
+        self.OCRsubjectiveAnswerInput.resize(100, 30)
 
 
     #TextView
@@ -234,8 +241,8 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         # self.window = QtWidgets.QMainWindow()
         self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
                                                      self.curProblemIsAnswers, float(self.scoreInput.text()),
-                                                     self.curProblemPage))
-        self.ui = UI_ProblemSetting(self.totalProblemList, self.problemAmount, self.testPaperAmount)
+                                                     self.curProblemPage, self.OCRsubjectiveAnswerInput.text()))
+        self.ui = UI_ProblemSetting(self.totalProblemList, self.problemAmount, self.testPaperAmount, self.gradeWithOCR)
         self.hide()
         # self.window.show()
 
@@ -246,7 +253,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         # 마지막 문제의 정보 저장
         self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
                                                      self.curProblemIsAnswers, float(self.scoreInput.text()),
-                                                     self.curProblemPage))
+                                                     self.curProblemPage, self.OCRsubjectiveAnswerInput.text()))
 
         self.grader(self.totalProblemList)  # 지금까지의 메타데이터를 기반으로 채점하기
 
@@ -283,7 +290,6 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
             count = count + 1
 
     def grader(self, totalProblemList):
-        # totalProblemList 정보 정리해 놓기 - 문제영역들&정답여부, 각 문제 점수이름 순서
 
         """
         각 마킹한 시험지들에서 마킹 정보를 뽑아 채점하고 점수 내기
@@ -446,7 +452,44 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                     marks.append(bestChoice + 1)
 
 
-                elif self.totalProblemList[curProblemNo].type == 3:  # 문제가 서술형인 경우
+                elif self.totalProblemList[curProblemNo].type == 2 and self.gradeWithOCR is True:  # 주관식 OCR 사용 채점 시
+                    x = 1.0
+                    y = 1.0
+                    img = warpedMarkedPaper[self.totalProblemList[curProblemNo].areas[0][1]:
+                                     self.totalProblemList[curProblemNo].areas[0][3],
+                              self.totalProblemList[curProblemNo].areas[0][0]:
+                              self.totalProblemList[curProblemNo].areas[0][2]]
+
+                    # Rescaling the image (it's recommended if you’re working with images that have a DPI of less than 300 dpi):
+                    img = cv2.resize(img, dsize=(0, 0), fx=x, fy=y,
+                                     interpolation=cv2.INTER_LINEAR + cv2.INTER_CUBIC)  # 높이와 너비도 정확도에 영향, 작을수록 정확해
+                    cv2.imshow("test", img)
+                    print('x:', x, 'y:', y)
+
+                    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                    cv2.imshow("gray", gray)
+
+                    # Applying dilation and erosion to remove the noise (you may play with the kernel size depending on your data set):
+                    kernel = np.ones((1, 1), np.uint8)
+                    gray = cv2.dilate(gray, kernel, iterations=1)
+                    gray = cv2.erode(gray, kernel, iterations=1)
+
+                    # cv2.adaptiveThreshold(cv2.medianBlur(gray, 3), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)  #median blur가 더 정확할거라고 했지만 실제로 적용해보니 그렇지 않음.
+                    blur = cv2.GaussianBlur(gray, (3, 3), 0)
+                    cv2.imshow("blur", gray)
+
+                    answerText = pytesseract.image_to_string(blur, lang='kor')  # 영어면 'euc'
+                    print("주관식 답안: {}".format(answerText))
+
+                    marks.append(answerText)
+                    if answerText == self.totalProblemList[curProblemNo].OCRsubjectiveAnswer:  # OCR 리딩 결과가 이전에 설정한 답과 일치할 시
+                        isCorrectList.append(True)
+                    else:  # OCR 리딩 결과 오답일 시
+                        isCorrectList.append(False)
+
+
+                elif (self.totalProblemList[curProblemNo].type == 2 and self.gradeWithOCR is False) \
+                        or self.totalProblemList[curProblemNo].type == 3:  # 문제가 서술형인 경우 또는 주관식 OCR 미사용 채점 시
                     descriptiveUI = QtWidgets.QWidget()
                     descriptiveUI_2 = Ui_AutomaticScoringProgramUI10()
                     descriptiveUI_2.setupUi(descriptiveUI, warpedMarkedPaper[self.totalProblemList[curProblemNo].areas[0][1]:
@@ -459,6 +502,9 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                         QtCore.QCoreApplication.processEvents()
                     isCorrectList.append(descriptiveUI_2.curScore)
                     marks.append(-1)
+
+                else:  # 문제 타입 인식 에러
+                    print("Error")
 
                 if curProblemNo == self.problemAmount - 1:
                     break

@@ -23,9 +23,14 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
     def confirmButtonClicked(self):  # 확인 버튼 클릭시 동작
         problemAmount = int(self.problemNumInput.toPlainText())  # 시험의 문제 갯수
         testpaperAmount = int(self.paperNumInput.toPlainText())  # 한 시험지 세트의 총 페이지 수
+        if self.check_useOCR.toPlainText() == "":  # OCR로 주관식 채점 여부 - 추후 변경 필요
+            gradeWithOCR = True  # OCR로 주관식 채점 여부
+        else:
+            gradeWithOCR = False
+
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_blankPaperInput()  # 다음 UI창인 blankPaperInput 창을 열기
-        self.ui.setupUi(self.window, problemAmount, testpaperAmount)
+        self.ui.setupUi(self.window, problemAmount, testpaperAmount, gradeWithOCR)
         questionNumInput.hide()
         self.window.show()
         
@@ -48,6 +53,9 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
         self.confirmButton.setGeometry(QtCore.QRect(160, 220, 75, 31))
         self.confirmButton.setObjectName("conFirmButton")
         self.confirmButton.clicked.connect((self.confirmButtonClicked))
+        self.check_useOCR = QtWidgets.QTextEdit(questionNumInput)  # OCR로 주관식 채점 여부
+        self.check_useOCR.setGeometry(QtCore.QRect(160, 270, 75, 31))
+        self.check_useOCR.setObjectName("check_useOCR")
 
         self.retranslateUi(questionNumInput)
         QtCore.QMetaObject.connectSlotsByName(questionNumInput)

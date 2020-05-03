@@ -11,6 +11,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 from questionNumInput import Ui_QuestionNumInput
 
+"""
+실행
+
+-이 파일이 프로그램의 첫 부분. 이 파일을 실행함으로써 프로그램이 실행됨
+-nameList.txt 에 학생들의 이름을 한 줄에 하나씩 공백 없이 입력해 두기
+-마킹되지 않은 시험지와 마킹된 학생들의 시험지 파일들을 준비. 현재 폴더에 테스트용 시험지들도 존재함
+-현재 일부 프로그램 안내들은 팝업 등의 GUI 방식이 아닌, 콘솔창에 안내가 나오고 있음. 수정 고려 필요
+"""
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -60,7 +68,7 @@ class Ui_Form(object):
         self.startButton_2.setText(_translate("Form", "시작"))
 
     def startButtonClicked(self):  # 시작 버튼 클릭 시 동작
-        self.questionNumInput = QtWidgets.QMainWindow()
+        self.questionNumInput = QtWidgets.QWidget()
         self.ui = Ui_QuestionNumInput()
         self.ui.setupUi(self.questionNumInput)
         self.questionNumInput.show()

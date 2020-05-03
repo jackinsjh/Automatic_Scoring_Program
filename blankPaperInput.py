@@ -76,7 +76,6 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
 
     def onInputButtonClicked(self):  # 마킹되지 않은 시험지 이미지를 열고, 각 사각 좌표를 지정해 수동으로 그림 늘리기
         fname = QFileDialog.getOpenFileNames()  # 비 마킹 시험지들의 파일 읽기
-        #self.label.setText(fname[0]) # 해당 파일의 절대 경로
         fileLocs = fname[0]  # 비 마킹 시험지 파일들의 절대 경로 리스트
 
         counter = 0  # 임시 변수
@@ -135,11 +134,8 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
 
             counter = counter + 1
 
-        # self.window = QtWidgets.QMainWindow()
         self.ui = UI_ProblemSetting([], self.problemAmount, self.testpaperAmount, self.gradeWithOCR)
-        # self.ui.setupUi(self.window)
         self.blankPaperInput.hide()
-        # self.window.show()  # 그 쓸데없이 나오던 작은 창.
 
 
 if __name__ == "__main__":

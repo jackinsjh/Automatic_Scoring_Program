@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'startPage.ui'
+# Form implementation generated from reading ui file 'D:\startPage.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -9,11 +9,14 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from questionNumInput import Ui_QuestionNumInput
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
+        self.Form = Form
         Form.setObjectName("Form")
-        Form.resize(1180, 800)
+        Form.resize(1064, 562)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -21,7 +24,7 @@ class Ui_Form(object):
         Form.setSizePolicy(sizePolicy)
         Form.setStyleSheet("background: #a8d8fd")
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(150, 210, 881, 131))
+        self.label.setGeometry(QtCore.QRect(90, 110, 881, 131))
         font = QtGui.QFont()
         font.setFamily("Bahnschrift SemiBold")
         font.setPointSize(48)
@@ -32,21 +35,8 @@ class Ui_Form(object):
         self.label.setStyleSheet("background: rgb(189, 189, 189)")
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
-        self.startButton = QtWidgets.QPushButton(Form)
-        self.startButton.setGeometry(QtCore.QRect(460, 480, 281, 71))
-        font = QtGui.QFont()
-        font.setFamily("나눔스퀘어 ExtraBold")
-        font.setPointSize(28)
-        font.setBold(False)
-        font.setItalic(False)
-        font.setWeight(10)
-        self.startButton.setFont(font)
-        self.startButton.setStyleSheet("font: 81 28pt \"나눔스퀘어 ExtraBold\";\n"
-"color: rgb(255, 255, 255);\n"
-"background-color: rgb(0, 85, 255);")
-        self.startButton.setObjectName("startButton")
         self.startButton_2 = QtWidgets.QPushButton(Form)
-        self.startButton_2.setGeometry(QtCore.QRect(460, 580, 281, 71))
+        self.startButton_2.setGeometry(QtCore.QRect(400, 350, 281, 91))
         font = QtGui.QFont()
         font.setFamily("나눔스퀘어 ExtraBold")
         font.setPointSize(30)
@@ -58,6 +48,7 @@ class Ui_Form(object):
 "color: rgb(255, 255, 255);\n"
 "background-color: rgb(0, 85, 255);")
         self.startButton_2.setObjectName("startButton_2")
+        self.startButton_2.clicked.connect(self.startButtonClicked)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -66,5 +57,22 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Automatic Scoring Program"))
         self.label.setText(_translate("Form", "Automatic Scoring Program"))
-        self.startButton.setText(_translate("Form", "정답지 제작"))
-        self.startButton_2.setText(_translate("Form", "채점하기"))
+        self.startButton_2.setText(_translate("Form", "시작"))
+
+    def startButtonClicked(self):  # 시작 버튼 클릭 시 동작
+        self.questionNumInput = QtWidgets.QMainWindow()
+        self.ui = Ui_QuestionNumInput()
+        self.ui.setupUi(self.questionNumInput)
+        self.questionNumInput.show()
+        self.Form.hide()
+
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())

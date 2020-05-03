@@ -52,7 +52,7 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
         self.confirmButton = QtWidgets.QPushButton(questionNumInput)
         self.confirmButton.setGeometry(QtCore.QRect(160, 220, 75, 31))
         self.confirmButton.setObjectName("conFirmButton")
-        self.confirmButton.clicked.connect((self.confirmButtonClicked))
+        self.confirmButton.clicked.connect(self.confirmButtonClicked)
         self.check_useOCR = QtWidgets.QTextEdit(questionNumInput)  # OCR로 주관식 채점 여부
         self.check_useOCR.setGeometry(QtCore.QRect(160, 270, 75, 31))
         self.check_useOCR.setObjectName("check_useOCR")

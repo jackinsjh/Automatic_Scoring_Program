@@ -8,7 +8,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from blankPaperInput import Ui_blankPaperInput
 from PyQt5.QtWidgets import *
 import numpy as np
 import cv2
@@ -142,6 +141,15 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
             QtCore.QCoreApplication.processEvents()
         popupUnmarked.hide()
 
+    def showPopupEdgeInstruction_1(self):
+        popupEdge = QtWidgets.QWidget()
+        popupEdge_UI = popupEdgeInstructionClass_1()
+        popupEdge_UI.setupUi(popupEdge)
+        popupEdge.show()
+        while popupEdge_UI.proceed == 0:  # 다음 버튼이 눌리기까지 대기
+            QtCore.QCoreApplication.processEvents()
+        popupEdge.hide()
+
     def confirmButtonClicked(self):  # 확인 버튼 클릭시 동작
 
         self.showPopupUnmarkedPaperInput()
@@ -153,6 +161,8 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
 
         fname = QFileDialog.getOpenFileNames()  # 비 마킹 시험지들의 파일 읽기
         fileLocs = fname[0]  # 비 마킹 시험지 파일들의 절대 경로 리스트
+
+        self.showPopupEdgeInstruction_1()
 
         counter = 0  # 임시 변수
         for imageLoc in fileLocs:  # 각 시험지 이미지마다
@@ -211,15 +221,12 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
             counter = counter + 1
 
         self.Form.hide()
-        self.ui = UI_ProblemSetting([], self.problemAmount, self.testpaperAmount, self.gradeWithOCR)
 
-        """
-        self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_blankPaperInput()  # 다음 UI창인 blankPaperInput 창을 열기
-        self.ui.setupUi(self.window, problemAmount, testpaperAmount, gradeWithOCR)
-        self.Form.hide()
-        self.window.show()
-        """
+        #문제 설정 창 띄우기
+        self.problemSettingWindow = QtWidgets.QWidget()
+        self.problemSettingWindowUI = UI_ProblemSetting()
+        self.problemSettingWindowUI.setupUi(self.problemSettingWindow, [], self.problemAmount, self.testpaperAmount, self.gradeWithOCR)
+        self.problemSettingWindow.show()
 
 
 class popupUnmarkedClass(object):
@@ -275,6 +282,73 @@ class popupUnmarkedClass(object):
         self.nameGuideLabel_1.setText(_translate("Form", "마킹하지 않은 원본 시험지 파일들을"))
         self.nameGuideLabel_2.setText(_translate("Form", "페이지 순서대로 선택해 주세요"))
         self.confirmButton.setText(_translate("Form", "계속"))
+
+    def onConfirmButtonClicked(self):
+        self.proceed = 1
+
+
+class popupEdgeInstructionClass_1(object):
+    def setupUi(self, Form):
+        self.proceed = 0
+        Form.setObjectName("Form")
+        Form.resize(409, 218)
+        Form.setStyleSheet("background: #a8d8fd")
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setGeometry(QtCore.QRect(20, 30, 61, 81))
+        self.label.setText("")
+        self.label.setPixmap(QtGui.QPixmap("pencil.png"))
+        self.label.setObjectName("label")
+        self.nameGuideLabel_1 = QtWidgets.QLabel(Form)
+        self.nameGuideLabel_1.setGeometry(QtCore.QRect(100, 20, 301, 21))
+        font = QtGui.QFont()
+        font.setFamily("나눔스퀘어 Bold")
+        font.setPointSize(13)
+        font.setBold(True)
+        font.setWeight(75)
+        self.nameGuideLabel_1.setFont(font)
+        self.nameGuideLabel_1.setObjectName("nameGuideLabel_1")
+        self.nameGuideLabel_2 = QtWidgets.QLabel(Form)
+        self.nameGuideLabel_2.setGeometry(QtCore.QRect(100, 60, 301, 21))
+        font = QtGui.QFont()
+        font.setFamily("나눔스퀘어 Bold")
+        font.setPointSize(13)
+        font.setBold(True)
+        font.setWeight(75)
+        self.nameGuideLabel_2.setFont(font)
+        self.nameGuideLabel_2.setObjectName("nameGuideLabel_2")
+        self.confirmButton = QtWidgets.QPushButton(Form)
+        self.confirmButton.setGeometry(QtCore.QRect(140, 150, 140, 50))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.confirmButton.sizePolicy().hasHeightForWidth())
+        self.confirmButton.setSizePolicy(sizePolicy)
+        self.confirmButton.setMinimumSize(QtCore.QSize(140, 50))
+        self.confirmButton.setStyleSheet("font: 81 24pt \"나눔스퀘어 ExtraBold\";\n"
+                                         "color: rgb(255, 255, 255);\n"
+                                         "background-color: rgb(0, 85, 255);")
+        self.confirmButton.setObjectName("confirmButton")
+        self.confirmButton.clicked.connect(self.onConfirmButtonClicked)
+        self.nameGuideLabel_3 = QtWidgets.QLabel(Form)
+        self.nameGuideLabel_3.setGeometry(QtCore.QRect(100, 100, 301, 21))
+        font = QtGui.QFont()
+        font.setFamily("나눔스퀘어 Bold")
+        font.setPointSize(13)
+        font.setBold(True)
+        font.setWeight(75)
+        self.nameGuideLabel_3.setFont(font)
+        self.nameGuideLabel_3.setObjectName("nameGuideLabel_3")
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self, Form):
+        _translate = QtCore.QCoreApplication.translate
+        Form.setWindowTitle(_translate("Form", "Form"))
+        self.nameGuideLabel_1.setText(_translate("Form", "좌상 - 우상 - 우하 - 좌하 순서대로"))
+        self.nameGuideLabel_2.setText(_translate("Form", "시험지 이미지의 모서리 부분을 클릭하고"))
+        self.confirmButton.setText(_translate("Form", "계속"))
+        self.nameGuideLabel_3.setText(_translate("Form", "엔터 키를 눌러주세요"))
 
     def onConfirmButtonClicked(self):
         self.proceed = 1

@@ -61,9 +61,16 @@ class Ui_Form(object):
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setGeometry(QtCore.QRect(320, 355, 61, 81))
+        self.label.setText("")
+        self.label.setPixmap(QtGui.QPixmap("pencil.png"))
+        self.label.setObjectName("label")
+
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Automatic Scoring Program"))
+        Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.label.setText(_translate("Form", "Automatic Scoring Program"))
         self.startButton_2.setText(_translate("Form", "시작"))
 

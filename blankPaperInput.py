@@ -70,7 +70,8 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
 
     def retranslateUi(self, blankPaperInput):
         _translate = QtCore.QCoreApplication.translate
-        blankPaperInput.setWindowTitle(_translate("blankPaperInput", "blankPaperInput"))
+        blankPaperInput.setWindowTitle(_translate("blankPaperInput", "Automatic Scoring Program"))
+        blankPaperInput.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.pushButton.setText(_translate("blankPaperInput", "Add blank test paper"))
 
 
@@ -96,8 +97,8 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
 
             height, width, channel = src.shape
 
-            cv2.imshow("UnmarkedOriginal", src)
-            cv2.setMouseCallback('UnmarkedOriginal', self.mouseCallbackSpot)
+            cv2.imshow("Automatic Scoring Program", src)
+            cv2.setMouseCallback('Automatic Scoring Program', self.mouseCallbackSpot)
 
             print("Click 4 spot of the image, starting from left-upper side, clockwise")
             print("After that, press any key")
@@ -113,7 +114,7 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
             matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
             # dstUnmarked : warped testing paper with no mark as original size
             warpedUnmarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
-            cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
+            cv2.imshow("Automatic Scoring Program", warpedUnmarkedPaper)
             cv2.waitKey(0)
 
             # 리사이징한 시험지 파일 저장

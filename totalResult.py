@@ -234,7 +234,8 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "결과 화면"))
+        Form.setWindowTitle(_translate("Form", "Automatic Scoring Program"))
+        Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.ResultPushButton.setText(_translate("Form", "엑셀 저장"))
 
         """

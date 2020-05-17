@@ -117,7 +117,8 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Automatic Scoring Program"))
+        Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.descriptiveProblemNumberLabel_2.setText(_translate("Form", "시험지 장수"))
         self.descriptiveProblemNumberLabel_3.setText(_translate("Form", "시험지 문제수"))
         self.check_useOCR.setText(_translate("Form", "OCR 주관식 채점 여부"))
@@ -182,8 +183,8 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
 
             height, width, channel = src.shape
 
-            cv2.imshow("UnmarkedOriginal", src)
-            cv2.setMouseCallback('UnmarkedOriginal', self.mouseCallbackSpot)
+            cv2.imshow("Automatic Scoring Program", src)
+            cv2.setMouseCallback('Automatic Scoring Program', self.mouseCallbackSpot)
 
             print("Click 4 spot of the image, starting from left-upper side, clockwise")
             print("After that, press any key")
@@ -199,7 +200,7 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
             matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
             # dstUnmarked : warped testing paper with no mark as original size
             warpedUnmarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
-            cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
+            cv2.imshow("Automatic Scoring Program", warpedUnmarkedPaper)
             cv2.waitKey(0)
 
             # 리사이징한 시험지 파일 저장
@@ -278,7 +279,8 @@ class popupUnmarkedClass(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Automatic Scoring Program"))
+        Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.nameGuideLabel_1.setText(_translate("Form", "마킹하지 않은 원본 시험지 파일들을"))
         self.nameGuideLabel_2.setText(_translate("Form", "페이지 순서대로 선택해 주세요"))
         self.confirmButton.setText(_translate("Form", "계속"))
@@ -344,7 +346,8 @@ class popupEdgeInstructionClass_1(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Automatic Scoring Program"))
+        Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.nameGuideLabel_1.setText(_translate("Form", "좌상 - 우상 - 우하 - 좌하 순서대로"))
         self.nameGuideLabel_2.setText(_translate("Form", "시험지 이미지의 모서리 부분을 클릭하고"))
         self.confirmButton.setText(_translate("Form", "계속"))

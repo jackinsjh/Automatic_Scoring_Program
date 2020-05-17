@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import cv2
 
 
-class Ui_AutomaticScoringProgramUI10(object):
+class descriptiveGradingUI(object):
     def setupUi(self, window, areaImage, problemNoInput, maxScoreInput):
         self.areaImage = areaImage  # 문제 영역을 자른 이미지
         self.problemNoInput = problemNoInput  # 문제 번호
@@ -20,6 +20,7 @@ class Ui_AutomaticScoringProgramUI10(object):
         
         self.window.setObjectName("AutomaticScoringProgramUI10")
         self.window.resize(439, 354)
+        self.window.setStyleSheet("background: #a8d8fd")
         self.scoreInput = QtWidgets.QLineEdit(self.window)
         self.scoreInput.setGeometry(QtCore.QRect(140, 190, 101, 41))
         self.scoreInput.setStyleSheet("font: 75 12pt \"나눔스퀘어 Bold\";")
@@ -78,11 +79,12 @@ class Ui_AutomaticScoringProgramUI10(object):
         QtCore.QMetaObject.connectSlotsByName(self.window)
 
         # 문제 영역 이미지 띄우고, 버튼 누르면 점수 입력된 것 리턴, 창 닫기
-        cv2.imshow("Answer", self.areaImage)
+        cv2.imshow("Automatic Scoring Program", self.areaImage)
 
     def retranslateUi(self, window):
         _translate = QtCore.QCoreApplication.translate
-        window.setWindowTitle(_translate("AutomaticScoringProgramUI10", "Form"))
+        window.setWindowTitle(_translate("AutomaticScoringProgramUI10", "Automatic Scoring Program"))
+        window.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.scoreInputSlash.setText(_translate("AutomaticScoringProgramUI10", "/"))
         self.scoreInputHeader.setText(_translate("AutomaticScoringProgramUI10", "점수 입력"))
         self.problemNumHeader.setText(_translate("AutomaticScoringProgramUI10", "서술형 문제 번호:"))
@@ -96,11 +98,13 @@ class Ui_AutomaticScoringProgramUI10(object):
         self.window.hide()
         self.curScore = int(self.scoreInput.text())
 
+"""
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     AutomaticScoringProgramUI10 = QtWidgets.QWidget()
-    ui = Ui_AutomaticScoringProgramUI10()
+    ui = descriptiveGradingUI()
     ui.setupUi(AutomaticScoringProgramUI10, areaImage, problemNoInput, maxScoreInput)
     AutomaticScoringProgramUI10.show()
     sys.exit(app.exec_())
+"""

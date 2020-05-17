@@ -18,7 +18,7 @@ from skimage.measure import compare_ssim
 
 from totalResult import Ui_totalResult
 
-from descriptiveGradingUI import Ui_AutomaticScoringProgramUI10
+from descriptiveGradingUI import descriptiveGradingUI
 
 import copy
 
@@ -252,7 +252,8 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
     def retranslateUi(self, problemSettingWindow):
         _translate = QtCore.QCoreApplication.translate
-        problemSettingWindow.setWindowTitle(_translate("problemSettingWindow", "Form"))
+        problemSettingWindow.setWindowTitle(_translate("problemSettingWindow", "Automatic Scoring Program"))
+        problemSettingWindow.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.headLabel.setText(_translate("problemSettingWindow", "시험지 문제 설정"))
         self.problemNumLabel.setText(_translate("problemSettingWindow", "문제 번호:"))
         self.problemTypeLabel.setText(_translate("problemSettingWindow", "문제 유형"))
@@ -330,8 +331,8 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
             # 각 마킹 영역을 마우스 드래그로 지정 후, 각 영역별로 마킹이 되어야 하는지의 여부를 기록
             while True:
-                cv2.imshow("warpedUnmarkedPaper", src)
-                cv2.setMouseCallback('warpedUnmarkedPaper', self.mouseCallbackROI)
+                cv2.imshow("Automatic Scoring Program", src)
+                cv2.setMouseCallback('Automatic Scoring Program', self.mouseCallbackROI)
 
                 print("Drag the area of each problem, starting from left-upper side, to right-under side")
                 print("After that, press 1 if correct, press 2 if incorrect, else if all the choices are marked")
@@ -365,8 +366,8 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
             curProblemCoordinates = []
 
             # 문제 답 기입 영역을 마우스 드래그로 지정하고 저장
-            cv2.imshow("warpedUnmarkedPaper", src)
-            cv2.setMouseCallback('warpedUnmarkedPaper', self.mouseCallbackROI)
+            cv2.imshow("Automatic Scoring Program", src)
+            cv2.setMouseCallback('Automatic Scoring Program', self.mouseCallbackROI)
 
             print("Drag the writing area of the problem, starting from left-upper side, to right-under side.")
             print("After that, press any key")
@@ -500,8 +501,8 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
             height, width, channel = src.shape
 
             # 현재 문제지 모서리 잘라내기
-            cv2.imshow("markedOriginal", src)
-            cv2.setMouseCallback('markedOriginal', self.mouseCallbackSpot)
+            cv2.imshow("Automatic Scoring Program", src)
+            cv2.setMouseCallback("Automatic Scoring Program", self.mouseCallbackSpot)
 
             print("Click 4 spot of the image, starting from left-upper side, clockwise")
             print("After that, press any key")
@@ -517,7 +518,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
             matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
             # dstUnmarked : warped testing paper with marks as original size
             warpedMarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
-            cv2.imshow("warpedmarkedPaper", warpedMarkedPaper)
+            cv2.imshow("Automatic Scoring Program", warpedMarkedPaper)
             # cv2.imwrite('./buffer/warpedBlankPaper.jpg', warpedMarkedPaper)
             cv2.waitKey(0)
 
@@ -601,11 +602,11 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                     # Rescaling the image (it's recommended if you’re working with images that have a DPI of less than 300 dpi):
                     img = cv2.resize(img, dsize=(0, 0), fx=x, fy=y,
                                      interpolation=cv2.INTER_LINEAR + cv2.INTER_CUBIC)  # 높이와 너비도 정확도에 영향, 작을수록 정확해
-                    cv2.imshow("test", img)
+                    cv2.imshow("Automatic Scoring Program", img)
                     print('x:', x, 'y:', y)
 
                     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                    cv2.imshow("gray", gray)
+                    cv2.imshow("Automatic Scoring Program", gray)
 
                     # Applying dilation and erosion to remove the noise (you may play with the kernel size depending on your data set):
                     kernel = np.ones((1, 1), np.uint8)
@@ -614,7 +615,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
                     # cv2.adaptiveThreshold(cv2.medianBlur(gray, 3), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)  #median blur가 더 정확할거라고 했지만 실제로 적용해보니 그렇지 않음.
                     blur = cv2.GaussianBlur(gray, (3, 3), 0)
-                    cv2.imshow("blur", gray)
+                    cv2.imshow("Automatic Scoring Program", gray)
 
                     answerText = pytesseract.image_to_string(blur, lang='kor')  # 영어면 'euc'
                     print("주관식 답안: {}".format(answerText))
@@ -630,7 +631,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                 elif (self.totalProblemList[curProblemNo].type == 2 and self.gradeWithOCR is False) \
                         or self.totalProblemList[curProblemNo].type == 3:  # 문제가 서술형인 경우 또는 주관식 OCR 미사용 채점 시
                     descriptiveUI = QtWidgets.QWidget()
-                    descriptiveUI_2 = Ui_AutomaticScoringProgramUI10()
+                    descriptiveUI_2 = descriptiveGradingUI()
                     descriptiveUI_2.setupUi(descriptiveUI,
                                             warpedMarkedPaper[self.totalProblemList[curProblemNo].areas[0][1]:
                                                               self.totalProblemList[curProblemNo].areas[0][3],
@@ -723,7 +724,8 @@ class popupMarkedClass(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Automatic Scoring Program"))
+        Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.nameGuideLabel_1.setText(_translate("Form", "마킹된 모든 학생들의 시험지 파일들을"))
         self.nameGuideLabel_2.setText(_translate("Form", "입력한 학생 이름, 페이지 순서대로 선택해 주세요"))
         self.confirmButton.setText(_translate("Form", "계속"))
@@ -789,7 +791,8 @@ class popupEdgeInstructionClass_1(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Automatic Scoring Program"))
+        Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.nameGuideLabel_1.setText(_translate("Form", "좌상 - 우상 - 우하 - 좌하 순서대로"))
         self.nameGuideLabel_2.setText(_translate("Form", "시험지 이미지의 모서리 부분을 클릭하고"))
         self.confirmButton.setText(_translate("Form", "계속"))

@@ -31,10 +31,11 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
     problemIsAnswerList = []  # 각 드래그된 마킹 영역들 별 정답 여부를 저장하는 임시 변수, True 와 False
 
 
-    def setupUi(self, blankPaperInput, problemAmount, testpaperAmount):
+    def setupUi(self, blankPaperInput, problemAmount, testpaperAmount, gradeWithOCR):
         self.problemAmount = problemAmount
         self.testpaperAmount = testpaperAmount
         self.blankPaperInput = blankPaperInput
+        self.gradeWithOCR = gradeWithOCR
 
         self.blankPaperInput.setObjectName("blankPaperInput")
         self.blankPaperInput.resize(800, 600)
@@ -69,14 +70,19 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
 
     def retranslateUi(self, blankPaperInput):
         _translate = QtCore.QCoreApplication.translate
-        blankPaperInput.setWindowTitle(_translate("blankPaperInput", "blankPaperInput"))
+        blankPaperInput.setWindowTitle(_translate("blankPaperInput", "Automatic Scoring Program"))
+        blankPaperInput.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.pushButton.setText(_translate("blankPaperInput", "Add blank test paper"))
 
 
     def onInputButtonClicked(self):  # 마킹되지 않은 시험지 이미지를 열고, 각 사각 좌표를 지정해 수동으로 그림 늘리기
-        fname = QFileDialog.getOpenFileNames()  # 비 마킹 시험지들의 파일 읽기
-        #self.label.setText(fname[0]) # 해당 파일의 절대 경로
-        fileLocs = fname[0]  # 비 마킹 시험지 파일들의 절대 경로 리스트
+        fileLocs = []
+        while True:
+            fname = QFileDialog.getOpenFileName()  # 비 마킹 시험지들의 파일 읽기
+            if fname[0] != '':  # 아직 읽을 파일이 들어온 경우
+                fileLocs.append(fname[0])
+            else:  # 읽을 파일이 더 없는 경우 - 루프 종료
+                break
 
         counter = 0  # 임시 변수
         for imageLoc in fileLocs:  # 각 시험지 이미지마다
@@ -96,8 +102,8 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
 
             height, width, channel = src.shape
 
-            cv2.imshow("UnmarkedOriginal", src)
-            cv2.setMouseCallback('UnmarkedOriginal', self.mouseCallbackSpot)
+            cv2.imshow("Automatic Scoring Program", src)
+            cv2.setMouseCallback('Automatic Scoring Program', self.mouseCallbackSpot)
 
             print("Click 4 spot of the image, starting from left-upper side, clockwise")
             print("After that, press any key")
@@ -113,7 +119,7 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
             matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
             # dstUnmarked : warped testing paper with no mark as original size
             warpedUnmarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
-            cv2.imshow("warpedUnmarkedPaper", warpedUnmarkedPaper)
+            cv2.imshow("Automatic Scoring Program", warpedUnmarkedPaper)
             cv2.waitKey(0)
 
             # 리사이징한 시험지 파일 저장
@@ -134,11 +140,8 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
 
             counter = counter + 1
 
-        # self.window = QtWidgets.QMainWindow()
-        self.ui = UI_ProblemSetting([], self.problemAmount, self.testpaperAmount)
-        # self.ui.setupUi(self.window)
+        self.ui = UI_ProblemSetting([], self.problemAmount, self.testpaperAmount, self.gradeWithOCR)
         self.blankPaperInput.hide()
-        # self.window.show()  # 그 쓸데없이 나오던 작은 창.
 
 
 if __name__ == "__main__":

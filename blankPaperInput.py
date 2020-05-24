@@ -76,8 +76,13 @@ class Ui_blankPaperInput(object):  # 마킹이 되지 않은 원본 시험지를
 
 
     def onInputButtonClicked(self):  # 마킹되지 않은 시험지 이미지를 열고, 각 사각 좌표를 지정해 수동으로 그림 늘리기
-        fname = QFileDialog.getOpenFileNames()  # 비 마킹 시험지들의 파일 읽기
-        fileLocs = fname[0]  # 비 마킹 시험지 파일들의 절대 경로 리스트
+        fileLocs = []
+        while True:
+            fname = QFileDialog.getOpenFileName()  # 비 마킹 시험지들의 파일 읽기
+            if fname[0] != '':  # 아직 읽을 파일이 들어온 경우
+                fileLocs.append(fname[0])
+            else:  # 읽을 파일이 더 없는 경우 - 루프 종료
+                break
 
         counter = 0  # 임시 변수
         for imageLoc in fileLocs:  # 각 시험지 이미지마다

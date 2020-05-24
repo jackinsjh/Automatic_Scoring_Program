@@ -159,9 +159,13 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
         self.testpaperAmount = int(self.paperNumInput.text())  # 한 시험지 세트의 총 페이지 수
         self.gradeWithOCR = self.check_useOCR.isChecked()  # OCR로 주관식 채점 여부
 
-
-        fname = QFileDialog.getOpenFileNames()  # 비 마킹 시험지들의 파일 읽기
-        fileLocs = fname[0]  # 비 마킹 시험지 파일들의 절대 경로 리스트
+        fileLocs = []
+        while True:
+            fname = QFileDialog.getOpenFileName()  # 비 마킹 시험지들의 파일 읽기
+            if fname[0] != '':  # 아직 읽을 파일이 들어온 경우
+                fileLocs.append(fname[0])
+            else:  # 읽을 파일이 더 없는 경우 - 루프 종료
+                break
 
         self.showPopupEdgeInstruction_1()
 
@@ -235,7 +239,7 @@ class popupUnmarkedClass(object):
         self.proceed = 0  # 계속 프로그램을 진행할지 여부를 저장하는 변수
 
         Form.setObjectName("Form")
-        Form.resize(409, 180)
+        Form.resize(423, 219)
         Form.setStyleSheet("background: #a8d8fd")
         self.label = QtWidgets.QLabel(Form)
         self.label.setGeometry(QtCore.QRect(20, 10, 61, 81))
@@ -261,7 +265,7 @@ class popupUnmarkedClass(object):
         self.nameGuideLabel_2.setFont(font)
         self.nameGuideLabel_2.setObjectName("nameGuideLabel_2")
         self.confirmButton = QtWidgets.QPushButton(Form)
-        self.confirmButton.setGeometry(QtCore.QRect(130, 110, 140, 50))
+        self.confirmButton.setGeometry(QtCore.QRect(150, 150, 140, 50))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -273,6 +277,15 @@ class popupUnmarkedClass(object):
                                          "background-color: rgb(0, 85, 255);")
         self.confirmButton.setObjectName("confirmButton")
         self.confirmButton.clicked.connect(self.onConfirmButtonClicked)
+        self.nameGuideLabel_3 = QtWidgets.QLabel(Form)
+        self.nameGuideLabel_3.setGeometry(QtCore.QRect(100, 100, 401, 21))
+        font = QtGui.QFont()
+        font.setFamily("나눔스퀘어 Bold")
+        font.setPointSize(15)
+        font.setBold(True)
+        font.setWeight(75)
+        self.nameGuideLabel_3.setFont(font)
+        self.nameGuideLabel_3.setObjectName("nameGuideLabel_3")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -283,6 +296,7 @@ class popupUnmarkedClass(object):
         Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.nameGuideLabel_1.setText(_translate("Form", "마킹하지 않은 원본 시험지 파일들을"))
         self.nameGuideLabel_2.setText(_translate("Form", "페이지 순서대로 선택해 주세요"))
+        self.nameGuideLabel_3.setText(_translate("Form", "모두 입력하면 취소 버튼을 눌러주세요"))
         self.confirmButton.setText(_translate("Form", "계속"))
 
     def onConfirmButtonClicked(self):

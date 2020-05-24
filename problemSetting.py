@@ -392,10 +392,10 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         self.totalProblemList.append(eachProblemInfo(self.curProblemType, self.curProblemCoordinates,
                                                      self.curProblemIsAnswers, float(self.scoreInput.text()),
                                                      self.curProblemPage, self.OCRsubjectiveAnswerInput.text()))
-        problemSettingWindow = QtWidgets.QWidget()
-        ui = UI_ProblemSetting()
-        ui.setupUi(problemSettingWindow, self.totalProblemList, self.problemAmount, self.testPaperAmount, self.gradeWithOCR)
-        problemSettingWindow.show()
+        self.newProblemSettingWindow = QtWidgets.QWidget()
+        self.new_ui = UI_ProblemSetting()
+        self.new_ui.setupUi(self.newProblemSettingWindow, self.totalProblemList, self.problemAmount, self.testPaperAmount, self.gradeWithOCR)
+        self.newProblemSettingWindow.show()
         self.currentWindow.hide()
 
     def onFinishButtonClicked(self):  # 문제 메타데이터 입력 완료 버튼을 눌렀을 때의 동작.
@@ -438,10 +438,15 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         """
         print("Please enter the names in nameList.txt file, in sequence, with no duplication")
         print("Enter the pages, in order of name and page")
+
         # 마킹한 문제지들 입력
-        fname = QFileDialog.getOpenFileNames()
-        # self.label.setText(fname[0])    #해당 파일들의 절대 경로. 파일을 선택한 순서대로 정렬되네
-        fileLocs = fname[0]
+        fileLocs = []
+        while True:
+            fname = QFileDialog.getOpenFileName()  # 비 마킹 시험지들의 파일 읽기
+            if fname[0] != '':  # 아직 읽을 파일이 들어온 경우
+                fileLocs.append(fname[0])
+            else:  # 읽을 파일이 더 없는 경우 - 루프 종료
+                break
 
         print(fileLocs)
 
@@ -452,9 +457,10 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
         while True:
             name = nameFile.readline()
-            if name == '' or name == '\n':
+            if name == '' or name == ' ' or name == '\n':
                 break
             else:
+                name = name.replace('\n', '')
                 nameCount = nameCount + 1
                 self.nameList.append(name)
                 print("name input: {}".format(name))
@@ -549,11 +555,13 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
             thresh = cv2.threshold(diff, 0, 255,
                                    cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
+            """ Debug
             cv2.imshow("Diff", diff)
             cv2.imshow("Thresh", thresh)
 
             cv2.waitKey(0)
             cv2.destroyAllWindows()
+            """
 
             # 시험지에서 마킹된 곳 파악, 정답과 비교, 채점
 
@@ -567,8 +575,10 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                               self.totalProblemList[curProblemNo].areas[choiceNo][0]:
                               self.totalProblemList[curProblemNo].areas[choiceNo][2]]  # 마킹 부분을 잘라낸 이미지
 
+                        """Debug
                         cv2.imshow("ROI", ROI)
                         cv2.waitKey(0)
+                        """
                         cv2.destroyAllWindows()
 
                         unique, counts = np.unique(ROI, return_counts=True)  # 마킹된 정도, 즉 validity 체크
@@ -602,11 +612,11 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                     # Rescaling the image (it's recommended if you’re working with images that have a DPI of less than 300 dpi):
                     img = cv2.resize(img, dsize=(0, 0), fx=x, fy=y,
                                      interpolation=cv2.INTER_LINEAR + cv2.INTER_CUBIC)  # 높이와 너비도 정확도에 영향, 작을수록 정확해
-                    cv2.imshow("Automatic Scoring Program", img)
+                    # cv2.imshow("Automatic Scoring Program", img)
                     print('x:', x, 'y:', y)
 
                     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                    cv2.imshow("Automatic Scoring Program", gray)
+                    # cv2.imshow("Automatic Scoring Program", gray)
 
                     # Applying dilation and erosion to remove the noise (you may play with the kernel size depending on your data set):
                     kernel = np.ones((1, 1), np.uint8)
@@ -615,10 +625,13 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
                     # cv2.adaptiveThreshold(cv2.medianBlur(gray, 3), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)  #median blur가 더 정확할거라고 했지만 실제로 적용해보니 그렇지 않음.
                     blur = cv2.GaussianBlur(gray, (3, 3), 0)
-                    cv2.imshow("Automatic Scoring Program", gray)
+                    # cv2.imshow("Automatic Scoring Program", gray)
 
                     answerText = pytesseract.image_to_string(blur, lang='kor')  # 영어면 'euc'
                     print("주관식 답안: {}".format(answerText))
+
+
+                    cv2.destroyAllWindows()
 
                     marks.append(answerText)
                     if answerText == self.totalProblemList[
@@ -659,6 +672,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                 marks = []
                 pageNo = 0
                 personNo = personNo + 1
+                curProblemNo = 0
             else:  # 아직 이 사람의 채점할 페이지가 남은 상태. 다음 페이지 채점 필요
                 pageNo = pageNo + 1
 
@@ -671,8 +685,8 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         # 결과창 로드
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_totalResult()
-        self.ui.setupUi(self.window, totalProblemList, totalResults)
-        self.hide()
+        self.ui.setupUi(self.window, totalProblemList, totalResults, self.gradeWithOCR)
+        self.currentWindow.hide()
         self.window.show()
 
 
@@ -680,7 +694,7 @@ class popupMarkedClass(object):
     def setupUi(self, Form):
         self.proceed = 0
         Form.setObjectName("Form")
-        Form.resize(513, 180)
+        Form.resize(513, 222)
         Form.setStyleSheet("background: #a8d8fd")
         self.label = QtWidgets.QLabel(Form)
         self.label.setGeometry(QtCore.QRect(20, 10, 61, 81))
@@ -706,7 +720,7 @@ class popupMarkedClass(object):
         self.nameGuideLabel_2.setFont(font)
         self.nameGuideLabel_2.setObjectName("nameGuideLabel_2")
         self.confirmButton = QtWidgets.QPushButton(Form)
-        self.confirmButton.setGeometry(QtCore.QRect(200, 110, 140, 50))
+        self.confirmButton.setGeometry(QtCore.QRect(200, 150, 140, 50))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -718,6 +732,15 @@ class popupMarkedClass(object):
                                          "background-color: rgb(0, 85, 255);")
         self.confirmButton.setObjectName("confirmButton")
         self.confirmButton.clicked.connect(self.onConfirmButtonClicked)
+        self.nameGuideLabel_3 = QtWidgets.QLabel(Form)
+        self.nameGuideLabel_3.setGeometry(QtCore.QRect(100, 100, 401, 21))
+        font = QtGui.QFont()
+        font.setFamily("나눔스퀘어 Bold")
+        font.setPointSize(15)
+        font.setBold(True)
+        font.setWeight(75)
+        self.nameGuideLabel_3.setFont(font)
+        self.nameGuideLabel_3.setObjectName("nameGuideLabel_3")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -728,6 +751,7 @@ class popupMarkedClass(object):
         Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
         self.nameGuideLabel_1.setText(_translate("Form", "마킹된 모든 학생들의 시험지 파일들을"))
         self.nameGuideLabel_2.setText(_translate("Form", "입력한 학생 이름, 페이지 순서대로 선택해 주세요"))
+        self.nameGuideLabel_3.setText(_translate("Form", "모두 입력하면 취소 버튼을 눌러주세요"))
         self.confirmButton.setText(_translate("Form", "계속"))
 
     def onConfirmButtonClicked(self):

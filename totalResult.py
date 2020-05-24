@@ -29,10 +29,11 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
 
         self.changeInfo(personLocation)  # 화면 정보를 다른 사람의 것으로 변경함
 
-    def setupUi(self, Form, totalProblemList, totalResults):  # 초기 UI 세팅
+    def setupUi(self, Form, totalProblemList, totalResults, gradeWithOCR):  # 초기 UI 세팅
 
         self.totalProblemList = totalProblemList  # 전달된 파라미터: 전체 문제들의 정보
         self.totalResults = totalResults  # 전달된 파라미터, 전체 시험자들의 정보
+        self.gradeWithOCR = gradeWithOCR  # 전달된 파라미터, 주관식 채점에 OCR 사용 여부, True/False
 
         # debug
         print("Are the parameters passed?")
@@ -273,11 +274,13 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         problemCounter = 0
         for problem in self.totalProblemList:
             totalScore = totalScore + problem.score
-            if problem.type == 1:  # 객관식 문제인 경우   주관식인 경우 구현도 필요
+            if problem.type == 1 or (problem.type == 2 and self.gradeWithOCR is True):  # 객관식 문제, OCR 사용 주관식 문제인 경우
                 if self.totalResults[personLocation].isCorrectList[problemCounter] is True:
                     myScore = myScore + problem.score
-            elif problem.type == 3:  # 서술형 문제인 경우
+            elif (problem.type == 2 and self.gradeWithOCR is False) or problem.type == 3:  # 서술형 문제인 경우
                 myScore = myScore + self.totalResults[personLocation].isCorrectList[problemCounter]
+            else:  # 문제 타입 에러
+                print('Error')
             problemCounter = problemCounter + 1
 
         myScoreLabelText = str(myScore) + ' / ' + str(totalScore)
@@ -315,33 +318,45 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
             if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
                 self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(
                     str(self.totalResults[personLocation].marks[problemNum])))
-            else:  # 주관식, 서술형일 시
+            elif self.totalProblemList[problemNum].type == 1 or \
+                    (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is True):  # OCR 사용 주관식일 시
+                self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(
+                    str(self.totalResults[personLocation].marks[problemNum])))
+            else:  # OCR 미사용 주관식, 서술형일 시
                 self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem("-"))
 
             # 정답
             if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
                 self.leftResultTable.setItem(problemNum, 2, QtWidgets.QTableWidgetItem(
                     str(self.getAnswerOfProblem(self.totalProblemList[problemNum]))))
-            else:  # 주관식, 서술형일 시
+            elif self.totalProblemList[problemNum].type == 1 or \
+                    (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is True):  # OCR 사용 주관식일 시
+                self.leftResultTable.setItem(problemNum, 2, QtWidgets.QTableWidgetItem(
+                    str(self.totalProblemList[problemNum].OCRsubjectiveAnswer)))
+            else:  # OCR 미사용 주관식, 서술형일 시
                 self.leftResultTable.setItem(problemNum, 2, QtWidgets.QTableWidgetItem("-"))
 
-            # 정답 여부 - 주관식 구현 필요
-            if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+            # 정답 여부
+            if self.totalProblemList[problemNum].type == 1 or \
+                    (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is True):  # 객관식, OCR 사용 주관식일 시
                 if self.totalResults[personLocation].isCorrectList[problemNum] is True:
                     self.leftResultTable.setItem(problemNum, 3, QtWidgets.QTableWidgetItem("정답"))
                 else:
                     self.leftResultTable.setItem(problemNum, 3, QtWidgets.QTableWidgetItem("오답"))
-            elif self.totalProblemList[problemNum].type == 3:  # 서술형일 시
+            elif (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is False) or \
+                    self.totalProblemList[problemNum].type == 3:  # OCR 미사용 주관식, 서술형일 시
                 self.leftResultTable.setItem(problemNum, 3, QtWidgets.QTableWidgetItem("-"))
                 
-            # 점수 - 주관식 구현 필요
-            if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+            # 점수
+            if self.totalProblemList[problemNum].type == 1 or \
+                    (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is True):  # 객관식, OCR 사용 주관식일 시
                 if self.totalResults[personLocation].isCorrectList[problemNum] is True:  # 정답 시
                     self.leftResultTable.setItem(problemNum, 4, QtWidgets.QTableWidgetItem(
                         str(self.totalProblemList[problemNum].score)))
                 else:  # 오답 시
                     self.leftResultTable.setItem(problemNum, 4, QtWidgets.QTableWidgetItem("0"))
-            elif self.totalProblemList[problemNum].type == 3:  # 서술형일 시
+            elif (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is False) or \
+                    self.totalProblemList[problemNum].type == 3:  # OCR 미사용 주관식, 서술형일 시
                 self.leftResultTable.setItem(problemNum, 4, QtWidgets.QTableWidgetItem(
                     str(self.totalResults[personLocation].isCorrectList[problemNum])))
 

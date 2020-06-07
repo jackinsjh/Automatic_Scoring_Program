@@ -28,6 +28,8 @@ class personResult:  # 한 사람의 시험지를 채점한 최종 결과
         self.name = name  # 이름
         self.isCorrectList = isCorrectList  # 정답 여부 True/False 리스트, 서술형 문제의 경우 획득한 점수가 대신 들어감
         self.marks = marks  # 마킹 리스트
+        self.totalScore = -1  # 채점 후 최종 스코어
+        self.wrongProblemString = "-1" # 틀린 문제 목록 스트링
 
 
 class eachProblemInfo:  # 각 문제의 정보를 저장하는 데 사용하는 클래스

@@ -1,18 +1,16 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'AutomaticScoringProgramUI11-1.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
-import pandas as pd
 from PyQt5 import QtCore, QtGui, QtWidgets
 from openpyxl import Workbook
 
-# from problemSetting import personResult, eachProblemInfo
+"""
+진행 방향
+problemSetting.py, descriptiveGradingUI.py --> totalResult.py
 
-class popupExcelSavedClass(object):
+- 채점 최종 결과 창을 보여주고, 요청시 채점 결과를 액셀 파일로 export 함
+- 액셀 파일은 프로그램의 경로에 result.xlsx 로 저장됨
+- 프로그램의 마지막 부분
+"""
+
+class popupExcelSavedClass(object):  # 엑셀 파일로 결과 저장시 나오는 알림창
     def setupUi(self, Form):
         self.proceed = 0
         Form.setObjectName("Form")
@@ -196,9 +194,7 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
 "background-color: rgb(0, 85, 255);")
         self.ResultPushButton.setObjectName("ResultPushButton")
         self.gridLayout_17.addWidget(self.ResultPushButton, 3, 1, 1, 1)
-
-        # 엑셀로 만들기
-        # rData = pd.DataFrame(data=[1, 2, 3])  # TODO: 나중에 설정 해줘야함. 엑셀로 넣을 데이터
+        # 엑셀로 만들기 버튼
         self.ResultPushButton.clicked.connect(self.resultPushButtonClicked)
 
         self.gridLayout_18 = QtWidgets.QGridLayout()
@@ -450,7 +446,7 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
                 self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("주관식"))
             elif self.totalProblemList[problemNum].type == 3:  # 서술형일 시
                 self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("서술형"))
-            else:  # error -> invalid problem type
+            else:  # 에러 - 유효하지 않은 문제 타입
                 print("error -> invalid problem type")
 
             # 마킹

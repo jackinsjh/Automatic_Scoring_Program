@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'D:\descriptiveGradingUI.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 import cv2
+
+"""
+진행 방향
+questionNumInput.py --> problemSetting.py, descriptiveGradingUI.py --> totalResult.py
+
+- descriptiveGradingUI.py 는 problemSetting.py 에 종속되어 사용되는 모듈임
+- 주관식/객관식 문제를 사용자가 임의로 채점할 때, problemSetting.py 가 call하며, 
+답 마킹 영역과 점수 입력창을 제공하여 사용자가 직접 채점을 진행할 수 있게 함
+"""
 
 
 class descriptiveGradingUI(object):
@@ -96,15 +97,6 @@ class descriptiveGradingUI(object):
     def onNextButtonClicked(self):
         cv2.destroyAllWindows()
         self.window.hide()
-        self.curScore = int(self.scoreInput.text())
+        self.curScore = int(self.scoreInput.text())  # 후에 problemSetting.py 에서 이 클래스의 curScore을 참조하여 점수를 추출
 
-"""
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    AutomaticScoringProgramUI10 = QtWidgets.QWidget()
-    ui = descriptiveGradingUI()
-    ui.setupUi(AutomaticScoringProgramUI10, areaImage, problemNoInput, maxScoreInput)
-    AutomaticScoringProgramUI10.show()
-    sys.exit(app.exec_())
-"""
+

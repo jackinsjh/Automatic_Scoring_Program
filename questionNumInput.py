@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'D:\questionNumInput.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 import numpy as np
@@ -14,6 +5,13 @@ import cv2
 
 from problemSetting import UI_ProblemSetting
 
+"""
+진행 방향
+start.py --> questionNumInput.py --> problemSetting.py
+
+- 시험의 문제 갯수, 한 시험지 세트의 총 페이지 수, 주관식 채점에 대한 OCR 사용 여부 등의 메타데이터들을 입력받음
+- 이후 마킹되지 않은 시험지를 입력받아 프로세싱 후, problemSetting 부분으로 넘어감
+"""
 
 class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 시험의 총 페이지 수를 질문.
 
@@ -23,7 +21,7 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
     problemCoordinateList = []  # 드래그된 문제 마킹 영역들을 저장하는 임시 변수
     problemIsAnswerList = []  # 각 드래그된 마킹 영역들 별 정답 여부를 저장하는 임시 변수, True 와 False
 
-    def setupUi(self, Form):
+    def setupUi(self, Form):  # UI 셋업
         Form.setObjectName("Form")
         Form.resize(484, 505)
         Form.setStyleSheet("background: #a8d8fd")
@@ -133,7 +131,7 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
             self.clickX, self.clickY = x, y
             self.clickCoordinates.append([self.clickX, self.clickY])
 
-    def showPopupUnmarkedPaperInput(self):
+    def showPopupUnmarkedPaperInput(self):  # 비 마킹 시험지를 입력하기 전, 안내 팝업 띄우기
         popupUnmarked = QtWidgets.QWidget()
         popupUnmarked_UI = popupUnmarkedClass()
         popupUnmarked_UI.setupUi(popupUnmarked)
@@ -142,7 +140,7 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
             QtCore.QCoreApplication.processEvents()
         popupUnmarked.hide()
 
-    def showPopupEdgeInstruction_1(self):
+    def showPopupEdgeInstruction_1(self):  # 시험지의 각 가장자리 좌표를 지정하기 전, 안내 팝업 띄우기
         popupEdge = QtWidgets.QWidget()
         popupEdge_UI = popupEdgeInstructionClass_1()
         popupEdge_UI.setupUi(popupEdge)
@@ -199,10 +197,9 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
             srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
             self.clickCoordinates = []
 
-            # assign 4 test paper's edges' coordinates and warp it to the original image size
+            # 시험지의 각 4개 꼭짓점을 지정하고, warping 진행
             dstPoint = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
             matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
-            # dstUnmarked : warped testing paper with no mark as original size
             warpedUnmarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
             cv2.imshow("Automatic Scoring Program", warpedUnmarkedPaper)
             cv2.waitKey(0)
@@ -211,7 +208,6 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
             cv2.imwrite('./buffer/unprocessedBlankPaper_{}.jpg'.format(counter), warpedUnmarkedPaper)
 
             # 마킹 안 된 시험지 Blur, 흑백화 등 이미지 정제
-
             # convert the images to grayscale
             unmarkedPaper = cv2.cvtColor(warpedUnmarkedPaper, cv2.COLOR_BGR2GRAY)
 
@@ -234,7 +230,7 @@ class Ui_QuestionNumInput(object):  # 맨 처음 뜨는 창. 문제 수와 한 �
         self.problemSettingWindow.show()
 
 
-class popupUnmarkedClass(object):
+class popupUnmarkedClass(object):  # 비 마킹 시헙지 입력 안내 팝업 클래스
     def setupUi(self, Form):
         self.proceed = 0  # 계속 프로그램을 진행할지 여부를 저장하는 변수
 
@@ -303,7 +299,7 @@ class popupUnmarkedClass(object):
         self.proceed = 1
 
 
-class popupEdgeInstructionClass_1(object):
+class popupEdgeInstructionClass_1(object):  # 시험지 각 꼭짓점 지정 시의 안내 팝업 클래스
     def setupUi(self, Form):
         self.proceed = 0
         Form.setObjectName("Form")

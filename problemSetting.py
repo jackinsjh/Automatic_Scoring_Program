@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'D:\problemSettingUI.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QWidget
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -22,12 +14,22 @@ from descriptiveGradingUI import descriptiveGradingUI
 
 import copy
 
+"""
+진행 방향
+questionNumInput.py --> problemSetting.py, descriptiveGradingUI.py --> totalResult.py
+
+- 시험의 각 문제의 점수, 마킹 위치, 문제 타입 등의 메타데이터를 받고 저장
+- 지금까지 모인 데이터를 이용하여 채점 진행
+- 이후 결과 정리 후, totalResult 부분으로 넘어감
+"""
 
 class personResult:  # 한 사람의 시험지를 채점한 최종 결과
     def __init__(self, name, isCorrectList, marks):
         self.name = name  # 이름
         self.isCorrectList = isCorrectList  # 정답 여부 True/False 리스트, 서술형 문제의 경우 획득한 점수가 대신 들어감
         self.marks = marks  # 마킹 리스트
+        self.totalScore = -1  # 채점 후 최종 스코어
+        self.wrongProblemString = "-1"  # 틀린 문제 목록 스트링
 
 
 class eachProblemInfo:  # 각 문제의 정보를 저장하는 데 사용하는 클래스
@@ -47,7 +49,7 @@ class eachProblemInfo:  # 각 문제의 정보를 저장하는 데 사용하는 
         print("page : {}".format(self.page))
 
 
-class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정하고, 채점함
+class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정하고, 채점하는 UI 클래스
 
     mouse_is_pressing = False  # 마우스를 누르고 있는지의 여부, 임시 변수
     clickX, clickY = -1, -1  # 클릭 좌표 저장용 임시 변수
@@ -62,7 +64,8 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         self.problemAmount = problemAmount  # 넘어온 문제 수 정보 저장
         self.testPaperAmount = testPaperAmount  # 넘어온 페이지 수 정보 저장
         self.gradeWithOCR = gradeWithOCR  # 넘어온 주관식 OCR 채점 여부 저장 - True/False
-
+        
+        # 변수 초기화
         self.curProblemType = -1
         self.curProblemCoordinates = []
         self.curProblemIsAnswers = []
@@ -293,7 +296,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         self.curProblemType = self.problemTypeComboBox.currentIndex()  # 1: 객관식  2: 주관식  3: 서술형
 
     def mouseCallbackROI(self, event, x, y, flags, param):  # 마우스 드래그 인식용 메소드
-        if event == cv2.EVENT_LBUTTONDOWN:  # 마우스를 누르는 동안...
+        if event == cv2.EVENT_LBUTTONDOWN:  # 마우스를 누르는 동안 실행하는 명령들
             self.mouse_is_pressing = True
             self.clickX, self.clickY = x, y
             self.clickXFirst = x
@@ -321,7 +324,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
 
         pageNum = int(self.pageOfProblemInput.text()) - 1  # 문제가 위치하는 페이지 번호, 이 번호는 0부터 시작
 
-        # read unmarked image
+        # 이전에 프로세싱된 마킹되지 않은 시험지 읽어오기
         src = cv2.imread('./buffer/unprocessedBlankPaper_{}.jpg'.format(pageNum), cv2.IMREAD_COLOR)
 
         if self.problemTypeComboBox.currentIndex() == 1:  # 객관식 문제인 경우
@@ -409,7 +412,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         self.grader(self.totalProblemList)  # 지금까지의 메타데이터를 기반으로 채점하기
 
 
-    def showPopupMarkedPaperInput(self):  # 마킹된 시험지의 파일 영역 표시 전 안내창
+    def showPopupMarkedPaperInput(self):  # 마킹된 시험지의 파일 영역 표시 전, 안내창 띄우기
         popupMarked = QtWidgets.QWidget()
         popupMarked_UI = popupMarkedClass()
         popupMarked_UI.setupUi(popupMarked)
@@ -419,7 +422,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         popupMarked.hide()
 
 
-    def showPopupEdgeInstruction_1(self):
+    def showPopupEdgeInstruction_1(self):  # 시험지의 꼭짓점 지정 작업 전, 안내창 띄우기
         popupEdge = QtWidgets.QWidget()
         popupEdge_UI = popupEdgeInstructionClass_1()
         popupEdge_UI.setupUi(popupEdge)
@@ -429,7 +432,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         popupEdge.hide()
 
 
-    def grader(self, totalProblemList):
+    def grader(self, totalProblemList):  # 채점을 진행하는 메소드
 
         self.showPopupMarkedPaperInput()
 
@@ -475,7 +478,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         for pageNum in range(self.testPaperAmount):
             # 마킹 안된 시험지들 읽어 오기
             unmarkedPaper = cv2.imread('./buffer/processedBlankPaper_{}.jpg'.format(pageNum), cv2.IMREAD_COLOR)
-            # convert the images to grayscale
+            # 이미지 흑백화
             unmarkedPaper = cv2.cvtColor(unmarkedPaper, cv2.COLOR_BGR2GRAY)
             unmarkedPapers.append(unmarkedPaper)
 
@@ -489,7 +492,6 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         # 각각 문제지 모서리 정리, 프로세싱 후 비마킹 시험지와 대비, 그리고 채점
 
         for imageLoc in fileLocs:  # 읽어온 각 마킹된 시험지마다
-            # read marked image
             src = cv2.imread(imageLoc, cv2.IMREAD_COLOR)
 
             # 너무 이미지 용량이 크다면 리사이징
@@ -519,19 +521,17 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
             srcPoint = np.array(self.clickCoordinates, dtype=np.float32)
             self.clickCoordinates = []
 
-            # assign 4 test paper's edges' coordinates and warp it to the original image size
+            # 시험지의 지정된 4개 꼭짓점을 바탕으로 warping 진행 - 사각형 칸에 맞추기
             dstPoint = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32)
             matrix = cv2.getPerspectiveTransform(srcPoint, dstPoint)
-            # dstUnmarked : warped testing paper with marks as original size
             warpedMarkedPaper = cv2.warpPerspective(src, matrix, (width, height))
             cv2.imshow("Automatic Scoring Program", warpedMarkedPaper)
-            # cv2.imwrite('./buffer/warpedBlankPaper.jpg', warpedMarkedPaper)
             cv2.waitKey(0)
 
             # 현재 문제지를 blur 흑백화 등 처리하고 각각 채점 결과 내기
             markedPaper = copy.deepcopy(warpedMarkedPaper)
 
-            # convert the images to grayscale
+            # 이미지 흑백화
             markedPaper = cv2.cvtColor(markedPaper, cv2.COLOR_BGR2GRAY)
 
             # blur
@@ -542,16 +542,11 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
             cv2.imwrite('./buffer/debugMarked.jpg', markedPaper)
             cv2.imwrite('./buffer/debugUnmarked.jpg', unmarkedPapers[pageNo])
 
-            # compute the Structural Similarity Index (SSIM) between the two
-            # images, ensuring that the difference image is returned
+            # 두 이미지의 Structural Similarity Index (SSIM) 을 계산하여, difference 이미지를 추출
             (score, diff) = compare_ssim(unmarkedPapers[pageNo], markedPaper, full=True)
-            # diff = (diff * 255).astype("uint8")  # multiplication number can be changed!
             diff = (diff * 255).astype("uint8")
-            # print("SSIM: {}".format(score))
 
-            # threshold the difference image, followed by finding contours to
-            # image binarization : classify every pixels as 0 or 1, not continuous one.
-            # obtain the regions of the two input images that differ
+            # threshold 를 통해, 이미지를 binarization(0, 1 흑백으로만 이미지 표현)
             thresh = cv2.threshold(diff, 0, 255,
                                    cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
@@ -575,7 +570,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                               self.totalProblemList[curProblemNo].areas[choiceNo][0]:
                               self.totalProblemList[curProblemNo].areas[choiceNo][2]]  # 마킹 부분을 잘라낸 이미지
 
-                        """Debug
+                        """ Debug
                         cv2.imshow("ROI", ROI)
                         cv2.waitKey(0)
                         """
@@ -601,15 +596,15 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                     marks.append(bestChoice + 1)
 
 
-                elif self.totalProblemList[curProblemNo].type == 2 and self.gradeWithOCR is True:  # 주관식 OCR 사용 채점 시
+                elif self.totalProblemList[curProblemNo].type == 2 and self.gradeWithOCR is True:  # 주관식 OCR 사용 채점 시 - OCR 이용한 채점 진행
                     x = 1.0
                     y = 1.0
-                    img = warpedMarkedPaper[self.totalProblemList[curProblemNo].areas[0][1]:
+                    img = warpedMarkedPaper[self.totalProblemList[curProblemNo].areas[0][1]:  # 주관식 답안 작성 영역
                                             self.totalProblemList[curProblemNo].areas[0][3],
                           self.totalProblemList[curProblemNo].areas[0][0]:
                           self.totalProblemList[curProblemNo].areas[0][2]]
 
-                    # Rescaling the image (it's recommended if you’re working with images that have a DPI of less than 300 dpi):
+                    # 답안 작성 영역 이미지 리사이징
                     img = cv2.resize(img, dsize=(0, 0), fx=x, fy=y,
                                      interpolation=cv2.INTER_LINEAR + cv2.INTER_CUBIC)  # 높이와 너비도 정확도에 영향, 작을수록 정확해
                     # cv2.imshow("Automatic Scoring Program", img)
@@ -618,7 +613,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                     # cv2.imshow("Automatic Scoring Program", gray)
 
-                    # Applying dilation and erosion to remove the noise (you may play with the kernel size depending on your data set):
+                    # 노이즈 제거를 위해 dilation 과 erosion 진행
                     kernel = np.ones((1, 1), np.uint8)
                     gray = cv2.dilate(gray, kernel, iterations=1)
                     gray = cv2.erode(gray, kernel, iterations=1)
@@ -690,7 +685,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
         self.window.show()
 
 
-class popupMarkedClass(object):
+class popupMarkedClass(object):  # 마킹된 시험지 파일 입력시의 안내창
     def setupUi(self, Form):
         self.proceed = 0
         Form.setObjectName("Form")
@@ -754,11 +749,11 @@ class popupMarkedClass(object):
         self.nameGuideLabel_3.setText(_translate("Form", "모두 입력하면 취소 버튼을 눌러주세요"))
         self.confirmButton.setText(_translate("Form", "계속"))
 
-    def onConfirmButtonClicked(self):
+    def onConfirmButtonClicked(self):  # 확인 버튼 클릭 시 동작 - 팝업을 닫고 다음 절차로 넘어감
         self.proceed = 1
 
 
-class popupEdgeInstructionClass_1(object):
+class popupEdgeInstructionClass_1(object):  # 시험지의 모서리 부분을 지정하기 전 나오는 안내창
     def setupUi(self, Form):
         self.proceed = 0
         Form.setObjectName("Form")
@@ -822,17 +817,6 @@ class popupEdgeInstructionClass_1(object):
         self.confirmButton.setText(_translate("Form", "계속"))
         self.nameGuideLabel_3.setText(_translate("Form", "엔터 키를 눌러주세요"))
 
-    def onConfirmButtonClicked(self):
+    def onConfirmButtonClicked(self):  # 확인 버튼 클릭 시 동작 - 팝업을 닫고 다음 절차로 넘어감
         self.proceed = 1
 
-"""
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    problemSettingWindow = QtWidgets.QWidget()
-    ui = UI_ProblemSetting()
-    ui.setupUi(problemSettingWindow)
-    problemSettingWindow.show()
-    sys.exit(app.exec_())
-"""

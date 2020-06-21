@@ -1,27 +1,19 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'D:\startPage.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from questionNumInput import Ui_QuestionNumInput
 
 """
-실행
+진행 방향
+start.py --> questionNumInput.py
 
--이 파일이 프로그램의 첫 부분. 이 파일을 실행함으로써 프로그램이 실행됨
--nameList.txt 에 학생들의 이름을 한 줄에 하나씩 공백 없이 입력해 두기
--마킹되지 않은 시험지와 마킹된 학생들의 시험지 파일들을 준비. 현재 폴더에 테스트용 시험지들도 존재함
--현재 일부 프로그램 안내들은 팝업 등의 GUI 방식이 아닌, 콘솔창에 안내가 나오고 있음. 수정 고려 필요
+- 이 파일이 프로그램의 첫 부분. 이 파일을 실행함으로써 프로그램이 실행됨
+- 프로그램의 메인 화면에 해당함
+- nameList.txt 에 학생들의 이름을 한 줄에 하나씩 공백 없이 입력해 두기
+- 마킹되지 않은 시험지와 마킹된 학생들의 시험지 파일들을 준비하기.
 """
 
-class Ui_Form(object):
-    def setupUi(self, Form):
+class Ui_Form(object):  # 메인 UI 클래스
+    def setupUi(self, Form):  # UI 셋업
         self.Form = Form
         Form.setObjectName("Form")
         Form.resize(1064, 562)
@@ -74,7 +66,7 @@ class Ui_Form(object):
         self.label.setText(_translate("Form", "Automatic Scoring Program"))
         self.startButton_2.setText(_translate("Form", "시작"))
 
-    def startButtonClicked(self):  # 시작 버튼 클릭 시 동작
+    def startButtonClicked(self):  # 시작 버튼 클릭 시 동작 - questionNumInput 부분으로 넘어가기
         self.questionNumInput = QtWidgets.QWidget()
         self.ui = Ui_QuestionNumInput()
         self.ui.setupUi(self.questionNumInput)

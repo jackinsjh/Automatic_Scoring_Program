@@ -1,23 +1,157 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'AutomaticScoringProgramUI11-1.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
-import pandas as pd
 from PyQt5 import QtCore, QtGui, QtWidgets
+from openpyxl import Workbook
 
-# from problemSetting import personResult, eachProblemInfo
+"""
+진행 방향
+problemSetting.py, descriptiveGradingUI.py --> totalResult.py
+
+- 채점 최종 결과 창을 보여주고, 요청시 채점 결과를 액셀 파일로 export 함
+- 액셀 파일은 프로그램의 경로에 result.xlsx 로 저장됨
+- 프로그램의 마지막 부분
+"""
+
+class popupExcelSavedClass(object):  # 엑셀 파일로 결과 저장시 나오는 알림창
+    def setupUi(self, Form):
+        self.proceed = 0
+        Form.setObjectName("Form")
+        Form.resize(409, 218)
+        Form.setStyleSheet("background: #a8d8fd")
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setGeometry(QtCore.QRect(20, 30, 61, 81))
+        self.label.setText("")
+        self.label.setPixmap(QtGui.QPixmap("pencil.png"))
+        self.label.setObjectName("label")
+        self.nameGuideLabel_1 = QtWidgets.QLabel(Form)
+        self.nameGuideLabel_1.setGeometry(QtCore.QRect(140, 40, 261, 51))
+        font = QtGui.QFont()
+        font.setFamily("나눔스퀘어 Bold")
+        font.setPointSize(25)
+        font.setBold(True)
+        font.setWeight(75)
+        self.nameGuideLabel_1.setFont(font)
+        self.nameGuideLabel_1.setObjectName("nameGuideLabel_1")
+        self.confirmButton = QtWidgets.QPushButton(Form)
+        self.confirmButton.setGeometry(QtCore.QRect(140, 140, 140, 50))
+        self.confirmButton.clicked.connect(self.onConfirmButtonClicked)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.confirmButton.sizePolicy().hasHeightForWidth())
+        self.confirmButton.setSizePolicy(sizePolicy)
+        self.confirmButton.setMinimumSize(QtCore.QSize(140, 50))
+        self.confirmButton.setStyleSheet("font: 81 24pt \"나눔스퀘어 ExtraBold\";\n"
+                                         "color: rgb(255, 255, 255);\n"
+                                         "background-color: rgb(0, 85, 255);")
+        self.confirmButton.setObjectName("confirmButton")
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self, Form):
+        _translate = QtCore.QCoreApplication.translate
+        Form.setWindowTitle(_translate("Form", "Automatic Scoring Program"))
+        Form.setWindowIcon(QtGui.QIcon("titleIcon.png"))
+        self.nameGuideLabel_1.setText(_translate("Form", "저장되었습니다!"))
+        self.confirmButton.setText(_translate("Form", "뒤로"))
+
+    def onConfirmButtonClicked(self):
+        self.proceed = 1
 
 
 class Ui_totalResult(object):  # 마지막 결과창 UI
-    
-    """
-    def resultPushButtonClicked(self, data):
-        data.to_csv("result.csv")
-    """
+
+    def showPopupExcelSaved(self):
+        popupExcelSaved = QtWidgets.QWidget()
+        popupExcelSaved_UI = popupExcelSavedClass()
+        popupExcelSaved_UI.setupUi(popupExcelSaved)
+        popupExcelSaved.show()
+        while popupExcelSaved_UI.proceed == 0:  # 다음 버튼이 눌리기까지 대기
+            QtCore.QCoreApplication.processEvents()
+        popupExcelSaved.hide()
+
+
+    def resultPushButtonClicked(self, data):  # 엑셀파일 생성 버튼 클릭 시 동작
+        excelWorkbook = Workbook()
+        excelSheet = excelWorkbook.active
+        for personIndex in range(len(self.totalResults)):
+            excelSheet.append(["이름: {}".format(self.totalResults[personIndex].name)])
+            excelSheet.append\
+                (["점수: {}".format("{} / {}".format(self.totalResults[personIndex].totalScore, self.fullScore))])
+            excelSheet.append(["틀린 문제: {}".format(self.totalResults[personIndex].wrongProblemString)])
+            excelSheet.append([""])
+            excelSheet.append(["문제 번호", "문제 유형", "마킹한 답", "실제 정답", "정답 여부", "획득 점수"])
+
+
+            for problemNum in range(len(self.totalProblemList)):
+
+                # 문제 유형
+                if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+                    problemType = "객관식"
+                elif self.totalProblemList[problemNum].type == 2:  # 주관식일 시
+                    problemType = "주관식"
+                elif self.totalProblemList[problemNum].type == 3:  # 서술형일 시
+                    problemType = "서술형"
+                else:
+                    problemType = "-1"
+                    print("Error")
+
+                # 마킹
+                if self.totalProblemList[problemNum].type == 1 or \
+                        (self.totalProblemList[
+                             problemNum].type == 2 and self.gradeWithOCR is True):  # 객관식이나 OCR 사용 주관식일 시
+                    userMark = str(self.totalResults[personIndex].marks[problemNum])
+                else:  # OCR 미사용 주관식, 서술형일 시
+                    userMark = "-"
+
+                # 정답 마킹
+                if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
+                    realMark = str(self.getAnswerOfProblem(self.totalProblemList[problemNum]))
+                elif self.totalProblemList[problemNum].type == 1 or \
+                        (self.totalProblemList[
+                             problemNum].type == 2 and self.gradeWithOCR is True):  # OCR 사용 주관식일 시
+                    realMark = str(self.totalProblemList[problemNum].OCRsubjectiveAnswer)
+                else:  # OCR 미사용 주관식, 서술형일 시
+                    realMark = "-"
+
+                # 정답 여부
+                if self.totalProblemList[problemNum].type == 1 or \
+                        (self.totalProblemList[
+                             problemNum].type == 2 and self.gradeWithOCR is True):  # 객관식, OCR 사용 주관식일 시
+                    if self.totalResults[personIndex].isCorrectList[problemNum] is True:
+                        isCorrect = "정답"
+                    else:
+                        isCorrect = "오답"
+                elif (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is False) or \
+                        self.totalProblemList[problemNum].type == 3:  # OCR 미사용 주관식, 서술형일 시
+                    isCorrect = "-"
+                else:
+                    isCorrect = "error"
+
+                # 점수
+                if self.totalProblemList[problemNum].type == 1 or \
+                        (self.totalProblemList[
+                             problemNum].type == 2 and self.gradeWithOCR is True):  # 객관식, OCR 사용 주관식일 시
+                    if self.totalResults[personIndex].isCorrectList[problemNum] is True:  # 정답 시
+                        givenScore = str(self.totalProblemList[problemNum].score)
+                    else:  # 오답 시
+                        givenScore = "0"
+                elif (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is False) or \
+                        self.totalProblemList[problemNum].type == 3:  # OCR 미사용 주관식, 서술형일 시
+                    givenScore = str(self.totalResults[personIndex].isCorrectList[problemNum])
+                else:
+                    givenScore = "error"
+
+                excelSheet.append([problemNum + 1, problemType, userMark, realMark, isCorrect, givenScore])
+
+
+            excelSheet.append([""])
+            excelSheet.append(["--------------------------------------------------------------------------"])
+
+        excelWorkbook.save('result.xlsx')
+
+        self.showPopupExcelSaved()
+
+
 
     def studentNameComboBoxClicked(self, name):  # 위 체크박스에서 다른 사람을 선택시 화면 정보를 다른 사람의 것으로 변경함
         
@@ -60,10 +194,8 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
 "background-color: rgb(0, 85, 255);")
         self.ResultPushButton.setObjectName("ResultPushButton")
         self.gridLayout_17.addWidget(self.ResultPushButton, 3, 1, 1, 1)
-
-        # 엑셀로 만들기
-        rData = pd.DataFrame(data=[1, 2, 3])  # TODO: 나중에 설정 해줘야함. 엑셀로 넣을 데이터
-        self.ResultPushButton.clicked.connect(lambda: self.resultPushButtonClicked(rData))
+        # 엑셀로 만들기 버튼
+        self.ResultPushButton.clicked.connect(self.resultPushButtonClicked)
 
         self.gridLayout_18 = QtWidgets.QGridLayout()
         self.gridLayout_18.setObjectName("gridLayout_18")
@@ -284,6 +416,8 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
             problemCounter = problemCounter + 1
 
         myScoreLabelText = str(myScore) + ' / ' + str(totalScore)
+        self.fullScore = totalScore
+        self.totalResults[personLocation].totalScore = myScore
         # self.myScoreLabel.setText(_translate("Form", myScoreLabelText))
         self.myScoreLabel_5.setText(myScoreLabelText)
 
@@ -297,6 +431,7 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
         wrongProblem = ', '.join(wrongProblem)
         if wrongProblem == '':
             wrongProblem = '없음'
+        self.totalResults[personLocation].wrongProblemString = wrongProblem
         # self.wrongProblemListLabel_5.setText(_translate("Form", wrongProblem))
         self.wrongProblemListLabel_5.setText(wrongProblem)
         
@@ -311,15 +446,12 @@ class Ui_totalResult(object):  # 마지막 결과창 UI
                 self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("주관식"))
             elif self.totalProblemList[problemNum].type == 3:  # 서술형일 시
                 self.leftResultTable.setItem(problemNum, 0, QtWidgets.QTableWidgetItem("서술형"))
-            else:  # error -> invalid problem type
+            else:  # 에러 - 유효하지 않은 문제 타입
                 print("error -> invalid problem type")
 
             # 마킹
-            if self.totalProblemList[problemNum].type == 1:  # 객관식일 시
-                self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(
-                    str(self.totalResults[personLocation].marks[problemNum])))
-            elif self.totalProblemList[problemNum].type == 1 or \
-                    (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is True):  # OCR 사용 주관식일 시
+            if self.totalProblemList[problemNum].type == 1 or \
+                    (self.totalProblemList[problemNum].type == 2 and self.gradeWithOCR is True):  # 객관식이나 OCR 사용 주관식일 시
                 self.leftResultTable.setItem(problemNum, 1, QtWidgets.QTableWidgetItem(
                     str(self.totalResults[personLocation].marks[problemNum])))
             else:  # OCR 미사용 주관식, 서술형일 시

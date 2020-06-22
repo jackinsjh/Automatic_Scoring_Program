@@ -622,7 +622,7 @@ class UI_ProblemSetting(QWidget):  # 각 문제들의 메타데이터를 지정�
                     blur = cv2.GaussianBlur(gray, (3, 3), 0)
                     # cv2.imshow("Automatic Scoring Program", gray)
 
-                    answerText = pytesseract.image_to_string(blur, lang='kor')  # 영어면 'euc'
+                    answerText = pytesseract.image_to_string(blur, lang='eng')  # 영어면 'eng', 한글이면 'kor'
                     print("주관식 답안: {}".format(answerText))
 
 

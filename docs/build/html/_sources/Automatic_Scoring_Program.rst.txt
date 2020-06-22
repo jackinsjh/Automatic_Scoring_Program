@@ -1,0 +1,16 @@
+Automatic_Scoring_Program
+======================================
+
+.. automodule:: Automatic_Scoring_Program
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   start
+
+   -------
+
+   .. automodule:: Automatic_Scoring_Program.start
+      :members:
+   .. automodule:: Automatic_Scoring_Program.questionNumInput
+      :members:

@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="10e43600-eba6-44ad-bbbc-efba0fc22cae" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/buffer/processedBlankPaper_0.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/buffer/processedBlankPaper_0.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/buffer/unprocessedBlankPaper_0.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/buffer/unprocessedBlankPaper_0.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marked1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/marked2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/marked3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ocrTest1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ocrTest2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ocrTest3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ocrTest4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oldOCR/OCR.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oldOCR/OCR_20200426-including unimplemented image processing.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oldOCR/ocrTest1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oldOCR/ocrTest2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oldOCR/ocrTest3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/oldOCR/ocrTest4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/ASP.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/Body.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/OCR.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/Open New Window.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI10-1.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI10-2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI10-2.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI10.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI11-1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI11-1.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI11.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/UI_Seo/졸업작품 보고용PPT.pptx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/blankPaperInput.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/blankPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/paperEvaluation.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/questionNumberDialogue.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_2019/questionNumberDialogue.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/descriptiveScoringPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/descriptiveScoringPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/initialSettingPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/initialSettingPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/resultPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/resultPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/startPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/startPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/testSettingPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200427/testSettingPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200517/descriptiveGradingUI.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200517/popup_edgeInstruction_1.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200517/popup_markedPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200517/popup_unmarkedPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200517/problemSettingUI.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200517/questionNumInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200517/startPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200525/descriptiveGradingUI.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200525/excelSaved.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200525/popup_edgeInstruction_1.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200525/popup_markedPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200525/popup_unmarkedPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200525/problemSettingUI.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200525/questionNumInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/UI_20200525/startPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/temp files/ocrTest2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unmarked1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unmarked2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unmarked3.jpg" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1b4TEW8jRV8I9uFTycRg9uiiID8" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
+  <component name="RunManager" selected="Python.start">
+    <configuration name="1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Automatic_Scoring_Program" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="D:/" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="D:/1.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="initialSettingPage" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Automatic_Scoring_Program" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/temp files/UI_20200427" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp files/UI_20200427/initialSettingPage.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="resultPage" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Automatic_Scoring_Program" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/temp files/UI_20200427" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp files/UI_20200427/resultPage.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Automatic_Scoring_Program" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/start.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="testSettingPage" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Automatic_Scoring_Program" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/temp files/UI_20200427" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp files/UI_20200427/testSettingPage.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.start" />
+        <item itemvalue="Python.resultPage" />
+        <item itemvalue="Python.testSettingPage" />
+        <item itemvalue="Python.1" />
+        <item itemvalue="Python.initialSettingPage" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="10e43600-eba6-44ad-bbbc-efba0fc22cae" name="Default Changelist" comment="" />
+      <created>1587890254967</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1587890254967</updated>
+      <workItem from="1587890258338" duration="7841000" />
+      <workItem from="1588493229041" duration="12639000" />
+      <workItem from="1589030250189" duration="25000" />
+      <workItem from="1589030317646" duration="10793000" />
+      <workItem from="1589700991157" duration="4668000" />
+      <workItem from="1589706075296" duration="3285000" />
+      <workItem from="1590341090229" duration="9656000" />
+      <workItem from="1591538507568" duration="5000000" />
+      <workItem from="1591832314898" duration="3447000" />
+      <workItem from="1592127869382" duration="1554000" />
+      <workItem from="1592141591384" duration="594000" />
+      <workItem from="1592838885518" duration="2499000" />
+      <workItem from="1593153848953" duration="1863000" />
+      <workItem from="1593158807519" duration="180000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="845" y="441" key="#Notifications" timestamp="1591538556189">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="845" y="441" key="#Notifications/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1591538556189" />
+    <state x="414" y="234" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1587890383641">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="414" y="234" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1587890383641" />
+    <state width="1676" height="466" key="DebuggerActiveHint" timestamp="1590348006025">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state width="1676" height="466" key="DebuggerActiveHint/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1590348006025" />
+    <state width="1237" height="395" key="GridCell.Tab.0.bottom" timestamp="1593158987334">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state width="1877" height="480" key="GridCell.Tab.0.bottom/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1592841390137" />
+    <state width="1237" height="395" key="GridCell.Tab.0.bottom/0.0.1920.1160/1920.0.1280.984@1920.0.1280.984" timestamp="1593158987334" />
+    <state width="1237" height="395" key="GridCell.Tab.0.center" timestamp="1593158987334">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state width="1877" height="480" key="GridCell.Tab.0.center/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1592841390137" />
+    <state width="1237" height="395" key="GridCell.Tab.0.center/0.0.1920.1160/1920.0.1280.984@1920.0.1280.984" timestamp="1593158987334" />
+    <state width="1237" height="395" key="GridCell.Tab.0.left" timestamp="1593158987333">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state width="1877" height="480" key="GridCell.Tab.0.left/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1592841390137" />
+    <state width="1237" height="395" key="GridCell.Tab.0.left/0.0.1920.1160/1920.0.1280.984@1920.0.1280.984" timestamp="1593158987333" />
+    <state width="1237" height="395" key="GridCell.Tab.0.right" timestamp="1593158987334">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state width="1877" height="480" key="GridCell.Tab.0.right/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1592841390137" />
+    <state width="1237" height="395" key="GridCell.Tab.0.right/0.0.1920.1160/1920.0.1280.984@1920.0.1280.984" timestamp="1593158987334" />
+    <state width="1237" height="395" key="GridCell.Tab.1.bottom" timestamp="1593158987334">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state width="1877" height="480" key="GridCell.Tab.1.bottom/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1592841390138" />
+    <state width="1237" height="395" key="GridCell.Tab.1.bottom/0.0.1920.1160/1920.0.1280.984@1920.0.1280.984" timestamp="1593158987334" />
+    <state width="1237" height="395" key="GridCell.Tab.1.center" timestamp="1593158987334">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state width="1877" height="480" key="GridCell.Tab.1.center/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1592841390138" />
+    <state width="1237" height="395" key="GridCell.Tab.1.center/0.0.1920.1160/1920.0.1280.984@1920.0.1280.984" timestamp="1593158987334" />
+    <state width="1237" height="395" key="GridCell.Tab.1.left" timestamp="1593158987334">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state width="1877" height="480" key="GridCell.Tab.1.left/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1592841390138" />
+    <state width="1237" height="395" key="GridCell.Tab.1.left/0.0.1920.1160/1920.0.1280.984@1920.0.1280.984" timestamp="1593158987334" />
+    <state width="1237" height="395" key="GridCell.Tab.1.right" timestamp="1593158987334">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state width="1877" height="480" key="GridCell.Tab.1.right/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1592841390138" />
+    <state width="1237" height="395" key="GridCell.Tab.1.right/0.0.1920.1160/1920.0.1280.984@1920.0.1280.984" timestamp="1593158987334" />
+    <state x="1920" y="0" width="1296" height="1072" key="dock-window-1" timestamp="1591833157227">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state x="1920" y="0" width="1296" height="1072" key="dock-window-1/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1591833157227" />
+    <state x="1920" y="0" width="1296" height="724" maximized="true" key="dock-window-2" timestamp="1588498768163">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state x="1920" y="0" width="1296" height="724" maximized="true" key="dock-window-2/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1588498768163" />
+    <state x="1920" y="0" width="1296" height="724" maximized="true" key="dock-window-3" timestamp="1588510997776">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state x="1920" y="0" width="1296" height="724" maximized="true" key="dock-window-3/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1588510997776" />
+    <state x="1920" y="0" width="1296" height="724" maximized="true" key="dock-window-4" timestamp="1588510997776">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state x="1920" y="0" width="1296" height="724" maximized="true" key="dock-window-4/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1588510997776" />
+    <state x="1920" y="0" width="1296" height="799" maximized="true" key="dock-window-5" timestamp="1589030274989">
+      <screen x="1920" y="0" width="1280" height="984" />
+    </state>
+    <state x="1920" y="0" width="1296" height="799" maximized="true" key="dock-window-5/0.0.1920.1160/1920.0.1280.984@0.0.1920.1160" timestamp="1589030274989" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Automatic_Scoring_Program$initialSettingPage.coverage" NAME="initialSettingPage Coverage Results" MODIFIED="1588497634029" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/temp files/UI_20200427" />
+    <SUITE FILE_PATH="coverage/Automatic_Scoring_Program$1.coverage" NAME="1 Coverage Results" MODIFIED="1588510911004" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="D:/" />
+    <SUITE FILE_PATH="coverage/Automatic_Scoring_Program$resultPage.coverage" NAME="resultPage Coverage Results" MODIFIED="1589701823837" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/temp files/UI_20200427" />
+    <SUITE FILE_PATH="coverage/Automatic_Scoring_Program$questionNumInput.coverage" NAME="questionNumInput Coverage Results" MODIFIED="1587909662689" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Automatic_Scoring_Program$testSettingPage.coverage" NAME="testSettingPage Coverage Results" MODIFIED="1589033627776" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/temp files/UI_20200427" />
+    <SUITE FILE_PATH="coverage/Automatic_Scoring_Program$OCR.coverage" NAME="OCR Coverage Results" MODIFIED="1587890434170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Automatic_Scoring_Program$start.coverage" NAME="start Coverage Results" MODIFIED="1592840669688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/source_version$start.coverage" NAME="start Coverage Results" MODIFIED="1593158808360" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>

@@ -2,14 +2,67 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="10e43600-eba6-44ad-bbbc-efba0fc22cae" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/buffer/debugMarked.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/buffer/debugMarked.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/buffer/debugUnmarked.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/buffer/debugUnmarked.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/buffer/processedBlankPaper_0.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/buffer/processedBlankPaper_0.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/buffer/unprocessedBlankPaper_0.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/buffer/unprocessedBlankPaper_0.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nameList.txt" beforeDir="false" afterPath="$PROJECT_DIR$/nameList.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/problemSetting.py" beforeDir="false" afterPath="$PROJECT_DIR$/problemSetting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/result.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/result.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/source version/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/marked1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/marked2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/marked3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/ocrTest1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/ocrTest2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/ocrTest3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/ocrTest4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/oldOCR/OCR.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/oldOCR/OCR_20200426-including unimplemented image processing.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/oldOCR/ocrTest1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/oldOCR/ocrTest2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/oldOCR/ocrTest3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/oldOCR/ocrTest4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/ASP.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/Body.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/OCR.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/Open New Window.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI10-1.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI10-2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI10-2.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI10.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI11-1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI11-1.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/UI_Seo/AutomaticScoringProgramUI11.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/UI_Seo/졸업작품 보고용PPT.pptx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/blankPaperInput.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/blankPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/paperEvaluation.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/questionNumberDialogue.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_2019/questionNumberDialogue.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/descriptiveScoringPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/descriptiveScoringPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/initialSettingPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/initialSettingPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/resultPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/resultPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/startPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/startPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/testSettingPage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200427/testSettingPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200517/descriptiveGradingUI.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200517/popup_edgeInstruction_1.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200517/popup_markedPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200517/popup_unmarkedPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200517/problemSettingUI.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200517/questionNumInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200517/startPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200525/descriptiveGradingUI.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200525/excelSaved.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200525/popup_edgeInstruction_1.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200525/popup_markedPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200525/popup_unmarkedPaperInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200525/problemSettingUI.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200525/questionNumInput.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/UI_20200525/startPage.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/temp files/ocrTest2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/unmarked1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/unmarked2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source version/unmarked3.jpg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +73,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1b4TEW8jRV8I9uFTycRg9uiiID8" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -179,6 +233,7 @@
       <workItem from="1592127869382" duration="1554000" />
       <workItem from="1592141591384" duration="594000" />
       <workItem from="1592838885518" duration="2499000" />
+      <workItem from="1593153848953" duration="1869000" />
     </task>
     <servers />
   </component>
